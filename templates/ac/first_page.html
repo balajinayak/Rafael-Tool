@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="page" style="width: 900px; margin: auto; margin-top: 80px;">
+        <div class="content">
+            <div>
+                <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.fg_number }}</small>
+                <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.project_name }}</small>
+            </div>
+            <table width="100%" cellpadding="10" cellspacing="0">
+                <tr>
+                    <td style="font-size: 14px; font-weight: bold; border: 1px solid gray;">DOC NO : {{ fg.doc_ref_no }}</td>
+                    <td align="center" style="color:rgb(41, 41, 186); font-size: 16px; font-weight: bold; border: 1px solid gray; min-width: 400px;">AP - Assembly Procedure</td>
+                    <td rowspan="2" align="center" style="font-weight:bold; font-size: 14px; border: 1px solid gray;">
+                        <div class="text-center">
+                            {% if fg.security %}
+                                SECURITY CLASS : <br /> {{ fg.security }}
+                            {% endif %}
+                        </div>
+                        <img src="https://www.cyientdlm.com/hs-fs/hubfs/dlm/CyientDLM.png?width=1073&height=609&name=CyientDLM.png" alt="CyientDLM Image" style="width: 60px; margin-left: 10px; margin-top: 5px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px; border: 1px solid gray;">DOC REV NO : {{ fg.checklist_rev_no }}</td>
+                    <td align="center" style="color:rgb(173, 25, 25); font-size: 18px; font-weight: bold; border: 1px solid gray; min-width: 400px;">{{ fg.product_desc | upper }}</td>
+                </tr>
+            </table>
+
+            <h4 style="text-decoration: underline;">Marking</h4>
+            {{ marking.marking | safe }}
+            <p>Barcode Content</p>
+            <ul>
+                <li>BARCODE 1 : S/N</li>
+                <li>BARCODE 2 : P/N</li>
+                <li>BARCODE 3 : PR. Rev.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

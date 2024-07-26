@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+
+{% block content %}
+
+<div class="si-plan">
+
+    {% include 'left-nav.html' %}
+
+    {% include 'user_button.html' %}
+
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert alert-{{ msg.tags }} col-6 mx-auto rounded-1">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+    
+
+    <h3 class="text-center">SI Plans</h3>
+    {% if user.is_superuser %}
+    <button type="button" id="add-row" class="btn btn-primary mx-1" data-bs-toggle="collapse" data-bs-target="#addSIPlan">Add SI Plan</button>
+    <a href="#siexcol" class="btn btn-primary mx-1" data-bs-toggle="collapse">Export to Excel</a>
+
+
+    <div class="collapse col-4 col-md-2 my-3" id="siexcol">
+        <form method="post" action="{% url 'si_plan_export' %}">
+            {% csrf_token %}
+            <input type="date" name="date" class="form-control" id="datePickerSI" />
+            <input type="submit" class="d-block mx-auto btn btn-primary mt-3" />
+        </form>
+    </div>
+
+
+    <div class="add-form shadow collapse my-4 px-5 py-4" id="addSIPlan">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    {{ form.date|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    {{ form.project|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    {{ form.product|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    {{ form.cdlm_part_number|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    {{ form.description|as_crispy_field }}
+                </div>
+               
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    {{ form.line|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    {{ form.offering_quantity|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    {{ form.total_quantity|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    {{ form.si_level|as_crispy_field }}
+                </div>
+               
+                <div class="row">
+                    <div class="col-6 col-md-2 ">
+                        {{ form.po|as_crispy_field }}
+                    </div>
+                <div class="col-6 col-md-2">
+                    {{ form.mrb_numbers|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-6 ">
+                    {{ form.remarks|as_crispy_field }}   
+                </div>
+                </div>
+            </div>
+            <input type="submit" class="btn btn-primary d-block mx-auto" />
+        </form>
+    </div>
+    {% endif %}
+    <form method="post" class="submit-form" novalidate>
+        {% csrf_token %}
+    <div class="table-responsive shadow p-4 my-4">
+        <table class="table" id="siTable">
+            <thead>
+                <tr>
+                    {% if user.is_superuser %}
+                    <th>Sl No</th>
+                    {% endif %}
+                    <th>Date</th>
+                    <th>Project</th>
+                    <th>Product</th>
+                    <th>CDLM Part Number</th>
+                    <th>Description</th>
+                    <th>PO</th>
+                    <th>Line</th>
+                    <th>Offering Qty</th>
+                    <th>Total Qty</th>
+                    <th>SI Level</th>
+                    <th>MRB Numbers</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody class="new-row">
+                {% for sp in si_plans %}
+                <tr>
+                    {% if user.is_superuser %}
+                    <td><a href="{% url 'update-siplan' sp.id %}">{{ sp.id }}</a></td>
+                    {% endif %}
+                    <td>{{ sp.date }}</td>
+                    <td>{{ sp.project }}</td>
+                    <td>{{ sp.product }}</td>
+                    <td>{{ sp.cdlm_part_number }}</td>
+                    <td>{{ sp.description }}</td>
+                    <td>{{ sp.po }}</td>
+                    <td>{{ sp.line }}</td>
+                    <td>{{ sp.offering_quantity }}</td>
+                    <td>{{ sp.total_quantity }}</td>
+                    <td>{{ sp.si_level }}</td>
+                    <td>
+                    {% for mrb_numbers in sp.mrb_numbers.split %}
+                        <p>{{ mrb_numbers }}</p>
+                     {% endfor %}
+                    </td>
+                    <td>
+                        {% for remarks in sp.remarks.split %}
+                            <p>{{ remarks }}</p>
+                         {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+                <!--<tr><button type="button" id="add-row" class="btn btn-primary mx-2">Add Data</button></tr>-->
+                <!--<tr><button type="submit" id="submit-data" class="btn btn-primary mx-2">Submit Data</button></tr>-->
+            </tbody>
+        </table>
+    </div>
+    </form>
+
+</div>
+
+
+<script>
+
+    $(document).ready(function() {
+        $('#siTable').DataTable();
+    });
+
+
+    var currentDate = new Date().toISOString().split('T')[0];
+
+    document.getElementById('datePickerSI').setAttribute('max', currentDate);
+
+    setTimeout(function() {
+        var alertContainer = document.querySelectorAll('.alert');
+        alertContainer.map((items)=>{
+            if (items) {
+                items.innerHTML = '';
+            }
+        })
+    }, 4000);
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% load static %}
+
+
+<div class="left-nav">
+    <div class="row flex-column align-items-center">
+        <div class="logo text-center">
+            <a href="{% url 'index' %}">
+                <img src="{% static 'images/Picture2.png' %}" width="100" class="py-4" />
+            </a>
+        </div>
+
+        <div class="menu">
+            <a class="nav-link text-light py-3 ps-3 {% if request.path == '/si-plan' %}active{% endif %}" href="{% url 'si-plan' %}">SI Plans</a>
+            <a class="nav-link text-light py-3 ps-3 {% if request.path == '/ncr-tracking' %}active{% endif %}" href="{% url 'ncr-tracking' %}">NCR Tracker</a>
+            <a class="nav-link text-light py-3 ps-3 {% if request.path == '/po-tracking' %}active{% endif %}" href="{% url 'po-tracking' %}">PO Tracker</a>
+            <a class="nav-link text-light py-3 ps-3 {% if request.path == '/defect-library' %}active{% endif %}" href="{% url 'defect-library' %}">Defects Library</a>
+            <a class="nav-link text-light py-3 ps-3 {% if request.path == '/serial-number' %}active{% endif %}" href="{% url 'serial-number' %}">Serial Number Verification</a>
+            <a class="nav-link text-light py-3 ps-3 {% if request.path == '/serial-mapping' %}active{% endif %}" href="{% url 'serial-mapping' %}">Serial Number Mapping</a>
+            <a class="nav-link text-light py-3 ps-3 {% if request.path == '/si-shipped' %}active{% endif %}" href="{% url 'si-shipped' %}">SI Shipped</a>
+            {% if request.user.is_staff %}
+            <a class="nav-link text-light py-3 ps-3" href="admin/" target="_blank">Master</a>
+            {% endif %}
+
+            
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,308 @@
+
+
+
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+
+{% block content %}
+
+<div class="si-plan">
+
+    {% include 'left-nav.html' %}
+
+    {% include 'user_button.html' %}
+
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert alert-{{ msg.tags }} col-6 mx-auto rounded-1">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <h4 class="text-center mb-5">Add NCR Tracker</h4>
+
+    <div class="row my-5 justify-content-center">
+        <form method="post" novalidate class="col-11 shadow px-5 py-4" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row mb-4">
+                <div class="col-4">
+                    {{ form.project | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.serial_number | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.ncr_date | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.ncr_number | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.customer_part_number | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.internal_fg_partnumber | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.po_number | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.details | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.ncr_quantity | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.remaining | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.ncr_status | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.approval_status | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.approval_Date | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.document | as_crispy_field }}
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row mb-5">
+                <div class="col-4">
+                    {{ form.site | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.customer | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.product_description | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.product_part_number | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.issue_reported_stage | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.po_details | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.product_rev | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.cyient_fg_number | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.issued_by | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.issued_to | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.lot | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.lot_and_defect_status | as_crispy_field }}
+                </div>
+            </div>
+
+
+            <div class="row mb-5">
+                <p class="p-1" style="background-color: rgb(216, 216, 216);">PROBLEM DESCRIPTION</p>
+                <div class="col-6">
+                    {{ form.image1 | as_crispy_field }}
+                </div>
+                <div class="col-6">
+                    {{ form.image2 | as_crispy_field }}
+                </div>
+                <div class="col-6">
+                    {{ form.circuit_reference_or_ref_designator | as_crispy_field }}
+                </div>
+                <div class="col-6">
+                    {{ form.number_of_defects | as_crispy_field }}
+                </div>
+            </div>
+
+            <div class="row mb-5">
+                <p class="p-1" style="background-color: rgb(216, 216, 216);">CONTAINMENT ACTION : (Containment action to be in place within one working shift)</p>
+                <div class="col-4">
+                    {{ form.containment_action | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.containment_resp | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.containment_date | as_crispy_field }}
+                </div>
+            </div>
+
+            <div class="row mb-5">
+                <p class="p-1" style="background-color: rgb(216, 216, 216);">ROOT CAUSE ANALYSIS : (RCA to be completed within two working shifts)</p>
+                <div class="col-12">
+                    {{ form.root_cause_analysis | as_crispy_field }}
+                </div>
+                <div class="col-12 row shadow rounded-1 mb-5 py-3">
+                    <div class="col-12">
+                        {{ form.why1 | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why1_man | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why1_method | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why1_material | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why1_machine | as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="col-12 row shadow rounded-1 mb-5 py-3">
+                    <div class="col-12">
+                        {{ form.why2 | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why2_man | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why2_method | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why2_material | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why2_machine | as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="col-12 row shadow rounded-1 mb-5 py-3">
+                    <div class="col-12">
+                        {{ form.why3 | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why3_man | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why3_method | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why3_material | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why3_machine | as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="col-12 row shadow rounded-1 mb-5 py-3">
+                    <div class="col-12">
+                        {{ form.why4 | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why4_man | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why4_method | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why4_material | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why4_machine | as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="col-12 row shadow rounded-1 mb-5 py-3">
+                    <div class="col-12">
+                        {{ form.why5 | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why5_man | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why5_method | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why5_material | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        {{ form.why5_machine | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="col-12">
+                    {{ form.how | as_crispy_field }}
+                </div>
+            </div>
+
+
+            <div class="row mb-5">
+                <p class="p-1" style="background-color: rgb(216, 216, 216);">CORRECTIVE  ACTION : (CA to be deployed within three working shifts)</p>
+                <div class="col-4">
+                    {{ form.corrective_action | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.corrective_resp | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.corrective_date | as_crispy_field }}
+                </div>
+            </div>
+
+
+            <div class="row mb-5">
+                <p class="p-1" style="background-color: rgb(216, 216, 216);">PREVENTIVE  ACTION/ HORIZONTAL DEPLOYMENT:  (PA to be deployed within four working shifts)</p>
+                <div class="col-4">
+                    {{ form.preventive_action | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.preventive_resp | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.preventive_date | as_crispy_field }}
+                </div>
+            </div>
+
+            <div class="row mb-5">
+                <p class="p-1" style="background-color: rgb(216, 216, 216);">VERIFICATION FOR EFFECTIVENESS  (To be filled by originating function)</p>
+                <div class="col-4">
+                    {{ form.wo_no | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.batch_no | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.verification_details | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.verification_status | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.verification_resp | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.varifiction_date | as_crispy_field }}
+                </div>
+                <hr />
+                <div class="col-12">
+                    {{ form.status | as_crispy_field }}
+                </div>
+            </div>
+
+            <input type="submit" class="btn btn-primary d-block mx-auto" />
+        </form>
+    </div>
+    
+
+</div>
+
+
+{% endblock %}
+

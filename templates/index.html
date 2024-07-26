@@ -1,0 +1,48 @@
+{% extends 'base2.html' %}
+{% load static %}
+
+{% block style %}
+    <style>
+        .box {
+        animation: zoomInOut 5s infinite;
+        }
+
+        @keyframes zoomInOut {
+        0% {
+            transform: rotateY(0deg);
+        }
+
+        100% {
+            transform: rotateY(360deg);
+        }
+        }
+
+    </style>
+{% endblock style %}
+
+{% block content %}
+
+    <div class="w-full h-[100vh] flex flex-col gap-10 items-center justify-center bg-gradient-to-br from-cyan-400 to-cyan-700">
+        <div class="box">
+            <img src="{% static 'images/Picture2.png' %}" class="w-[130px]" />
+        </div>
+        <div class="flex gap-5">
+            <div>
+                <a href="{% url 'home' %}"><h1 class="text-white border-2 py-5 px-10 rounded-full hover:bg-white hover:text-cyan-500 hover:scale-90 duration-150">RAFAEL TOOL</h1></a>
+            </div>
+            <div>
+                <a href="{% url 'master_data' %}"><h1 class="text-white border-2 py-5 px-14 rounded-full hover:bg-white hover:text-cyan-500 hover:scale-90 duration-150">AC TOOL</h1></a>
+            </div>
+           
+        </div>
+        <div>
+            <h1 class="text-xl font-bold">WELCOME <span class="text-white">{{ user.username | upper }}</span></h1>
+        </div>
+        {% if user.is_superuser %}
+            <div>
+                <a href="{% url 'add_user' %}">ADD USER</a>
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends 'base2.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+<div class="absolute left-[225px] top-[30px] right-4 min-h-[90vh] flex justify-center">
+    <div class="forms w-[100%] p-4">
+
+        {% if messages %}
+        {% for msg in messages %}
+            <div id="message_{{ forloop.counter }}" class="p-4 {% if msg.tags == 'error' %} bg-red-100 border-l-4 border-red-500 text-red-700 {% else %} bg-green-100 border-l-4 border-green-500 text-green-700 {% endif %}" role="alert">
+                <p class="font-bold">
+                    {% if msg.tags == 'error' %} error {% else %} success {% endif %}
+                </p>
+                <p>{{ msg }}</p>
+            </div>
+            <script>
+                setTimeout(function() {
+                    document.getElementById("message_{{ forloop.counter }}").style.display = 'none';
+                }, 5000);
+            </script>
+        {% endfor %}
+    {% endif %}
+
+    <div id="msg"></div>
+    <script>
+        function showAlert(message, format) {
+            setTimeout(function() {
+                document.getElementById("message_{{ forloop.counter }}").style.display = 'none';
+            }, 5000);
+            document.getElementById('msg').innerHTML=`
+                <div id="message_{{ forloop.counter }}" class="p-4 ${ format == 'error' ? 'bg-red-100 border-l-4 border-red-500 text-red-700' : format == 'success' ? 'bg-green-100 border-l-4 border-green-500 text-green-700' : 'bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700' }" role="alert">
+                    <p class="font-bold">
+                        ${ format == 'error' ? 'error' : 'success' }
+                    </p>
+                    <span id="alert_{{ forloop.counter }}">${ message }</span>
+                </div>
+            `
+        }
+    </script>
+        <!--
+        <form method="get" class="w-[80%] mx-auto flex justify-center gap-2">
+            <input type="text" list="fg" name="fg_number" placeholder="FG Number" value="{{ request.GET.fg_number }}" autocomplete="off" class="search text-gray-700 border border-gray-200 rounded py-1 px-2 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-[180px]">
+            <input type="text" list="wo" name="work_order" placeholder="Work Order" value="{{ request.GET.work_order }}" autocomplete="off" class="search text-gray-700 border border-gray-200 rounded py-1 px-2 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-[180px]">
+            <input type="date" name="date" placeholder="Date" value="{{ request.GET.date }}" autocomplete="off" class="search text-gray-700 border border-gray-200 rounded py-1 px-2 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-[180px]">
+            <button type="submit" class="border-cyan-500 text-cyan-500 px-4 py-1 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white">Filter</button>
+            <a href="{% url 'wip' %}" class="border-cyan-500 text-cyan-500 px-4 py-1 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white">Clear</a>
+            <datalist id="fg">
+                {% for f in fg %}
+                    <option>{{ f }}</option>
+                {% endfor %}
+            </datalist>
+            <datalist id="wo">
+                {% for w in wo %}
+                    <option>{{ w.work_order }}</option>
+                {% endfor %}
+            </datalist>
+            <datalist id="des">
+                {% for d in des %}
+                    <option>{{ d.description }}</option>
+                {% endfor %}
+            </datalist>
+        </form>
+        -->
+
+        <button class="border-cyan-500 text-cyan-500 px-4 py-1 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white" onclick="exportTableToExcel('myTable', 'table.xlsx')">Export</button>
+
+        <div class="w-[100%] my-[20px] mx-auto overflow-x-auto">
+            <table id="myTable">
+                <thead>
+                    <tr>
+                        <th class="px-6">FG Number</th>
+                        <th class="px-6">Work Order</th>
+                        <th class="px-6">WO Qty</th>
+                        {% for stage in stages %}
+                        <th class="px-6">{{ stage.description }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in data_list %}
+                    <tr class="border-b-2 border-slate-100 last:border-b-0 odd:bg-white even:bg-slate-100" title="{{ data.serial }}">
+                        <td class="text-center">{{ data.fg_number }}</td>
+                        <td class="text-center">{{ data.work_order }}</td>
+                        <td class="text-center">{{ data.wo_quantity }}</td>
+                        {% for stage in stages %}
+                            <td class="containerrr text-center">
+                                {% with matching_stage=None %}
+                                    {% for fg_stage in data.stages %}
+                                        {% if fg_stage.description == stage.description %}
+                                            {% with matching_stage=fg_stage %}
+                                                <small id="quantity">{{ fg_stage.quantity }}</small>
+                                            {% endwith %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if not matching_stage %}
+                                        <small>NA</small>
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!--dummy-->
+
+        </div>
+
+    </div><!--forms-->
+
+</div><!--page style-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+        const containers = document.querySelectorAll('.containerrr');
+        containers.forEach(container => {
+            const smallTags = container.getElementsByTagName('small');
+            const smallTagsArray = Array.from(smallTags);
+            smallTagsArray.slice(1).forEach(tag => tag.remove());
+        });
+
+        function exportTableToExcel(tableID, filename = ''){
+            var tableSelect = document.getElementById(tableID);
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.table_to_sheet(tableSelect);
+            XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+            var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+
+            function s2ab(s) {
+                var buf = new ArrayBuffer(s.length);
+                var view = new Uint8Array(buf);
+                for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+                return buf;
+            }
+
+            var downloadLink = document.createElement("a");
+            downloadLink.href = URL.createObjectURL(new Blob([s2ab(wbout)], {type: "application/octet-stream"}));
+            downloadLink.download = filename;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+</script>
+
+{% endblock %}

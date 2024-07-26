@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+
+{% block content %}
+
+<div class="si-plan">
+
+    {% include 'left-nav.html' %}
+
+    {% include 'user_button.html' %}
+
+    {% if messages %}
+      {% for msg in messages %}
+          <div class="alert alert-{{ msg.tags }} col-6 mx-auto rounded-1">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <h4 class="text-center mb-5">Defects Library</h4>
+
+    {% if user.is_superuser %}
+    <a href="{% url 'add_defect_library' %}" class="btn btn-primary mx-1">Add</a>
+    {% endif %}
+
+    <div class="table-responsive shadow p-4 my-4">
+        <table class="table" id="siTable">
+            <thead>
+                <tr>
+                    {% if user.is_superuser %}
+                    <th>Sl No</th>
+                    {% endif %}
+                    <th>Customer</th>
+                    <th>Project</th>
+                    <th>Product P/N</th>
+                    <th>Complaint Description</th>
+                    <th>Customer P/N</th>
+                    <th>Product Rev</th>
+                    <th>Description</th>
+                    <th>Complaint Details</th>
+                    <th>Source of Complaint</th>
+                    <th>Quantity Affected</th>
+                    <th>Reported on</th>
+                    <th>Updated on</th>
+                    <th>Defect Image Available</th>
+                    <th>Defect Image</th>
+                    <th>Root Cause</th>
+                    <th>CA PA</th>
+                    <th>Defect Cause</th>
+                </tr>
+            </thead>
+            <tbody class="new-row">
+                {% for d in data %}
+                <tr>
+                    {% if user.is_superuser %}
+                    <td><a href="{% url 'defect_library_details' d.pk %}">{{ d.id }}</a></td>
+                    {% endif %}
+                    <td>{{ d.customer }}</td>
+                    <td>{{ d.project }}</td>
+                    <td>{{ d.product_part_number }}</td>
+                    <td>{{ d.brief_defect_description }}</td>
+                    <td>{{ d.customer_part_number }}</td>
+                    <td>{{ d.product_rev }}</td>
+                    <td>{{ d.product_description }}</td>
+                    <td>{{ d.complaint_description }}</td>
+                    <td>{{ d.source_of_complaint }}</td>
+                    <td>{{ d.quantity_affected }}</td>
+                    <td>{{ d.original_date }}</td>
+                    <td>{{ d.reported_on }}</td>
+                    <td>{{ d.defect_image_available }}</td>
+                    <td>
+                        {% if d.defect_image and d.defect_image.url %}
+                            <a href="#{{d.id}}" data-bs-toggle="modal">
+                                <img src="{{ d.defect_image.url }}" width="130" />
+                            </a>
+                        {% else %}
+                            <p>No image available for this defect.</p>   
+                        {% endif %}
+
+                    </td>
+                    <td>{{ d.root_cause }}</td>
+                    <td>{{ d.ca_pa }}</td>
+                    <td>{{ d.defect_cause }}</td>
+                </tr>
+                <div class="modal modal-lg" id="{{d.id}}">
+                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                        <div class="modal-content border-0" style="background-color: transparent !important;">
+                            <div class="modal-body mx-auto">
+                                {% if d.defect_image and d.defect_image.url %}
+                                    <img src="{{ d.defect_image.url }}" />
+                                {% else %}
+                                    <p>No image available for this defect.</p>                                    
+                                {% endif %}
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+
+<script>
+    
+    $(document).ready(function() {
+        $('#siTable').DataTable();
+    });
+
+</script>
+
+{% endblock %}

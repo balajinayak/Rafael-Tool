@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<video autoplay muted loop class="vid-bg">
+    <source src="{% static 'images/vid-bg.mp4' %}" />
+</video>
+
+<div class="tabs row mx-5 mx-md-1 align-items-center justify-content-between" style="min-height: 100vh;">
+
+        <div class="col-3">
+            <div class="text-center my-5">
+                <a href="{% url 'ncr-tracking' %}" class="text-decoration-none">
+                    <div class="card rounded-2 border-0 px-5 py-4">
+                        <div class="card-body">
+                            <p class="p-0 m-0 text-white fw-bold">NCR Tracker</p>
+                        </div>
+                    </div>
+                </a>
+            </div><!--tab 1-->
+            <div class="text-center my-5">
+                <a href="{% url 'po-tracking' %}" class="text-decoration-none">
+                    <div class="card rounded-2 border-0 px-5 py-4">
+                        <div class="card-body">
+                            <p class="p-0 m-0 text-white fw-bold">PO Tracker</p>
+                        </div>
+                    </div>
+                </a>
+            </div><!--tab 2-->
+            <div class="text-center my-5">
+                <a href="{% url 'defect-library' %}" class="text-decoration-none">
+                    <div class="card rounded-2 border-0 px-5 py-4">
+                        <div class="card-body">
+                            <p class="p-0 m-0 text-white fw-bold">Defects Library</p>
+                        </div>
+                    </div>
+                </a>
+            </div><!--tab 3-->
+            
+            <div class="text-center my-5">
+                <a href="{% url 'si-plan' %}" class="text-decoration-none">
+                    <div class="card rounded-2 border-0 px-5 py-4">
+                        <div class="card-body">
+                            <p class="p-0 m-0 text-white fw-bold">SI Plans</p>
+                        </div>
+                    </div>
+                </a>
+            </div><!--tab 4-->
+           
+        </div>
+
+        <div class="col-3">
+
+            <div class="text-center my-5">
+                <a href="{% url 'serial-number' %}" class="text-decoration-none">
+                    <div class="card rounded-2 border-0 px-5 py-4">
+                        <div class="card-body">
+                            <p class="p-0 m-0 text-white fw-bold">Serial Number Verification</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+           
+            <div class="text-center my-5">
+                <a href="{% url 'serial-mapping' %}" class="text-decoration-none">
+                    <div class="card rounded-2 border-0 px-5 py-4">
+                        <div class="card-body">
+                            <p class="p-0 m-0 text-white fw-bold">Serial Number Mapping</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="text-center my-5">
+                <a href="{% url 'si-shipped' %}" class="text-decoration-none">
+                    <div class="card rounded-2 border-0 px-5 py-4">
+                        <div class="card-body">
+                            <p class="p-0 m-0 text-white fw-bold">SI Shipped</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% if request.user.is_staff %}
+            <div class="text-center my-5">
+                <a href="admin/" class="text-decoration-none">
+                    <div class="card rounded-2 border-0 px-5 py-4">
+                        <div class="card-body">
+                            <p class="p-0 m-0 text-white fw-bold">Master</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+
+</div>
+
+
+<img src="{% static 'images/CyientDLM.webp' %}" style="width: 170px; position: absolute; z-index: 10000; top: 50%; left: 50%; transform: translateX(-100px) translateY(-50px);" />
+
+{% endblock content %}
+

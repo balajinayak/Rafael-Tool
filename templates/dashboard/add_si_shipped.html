@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+{% block content %}
+
+<div class="si-plan">
+
+    {% include 'left-nav.html' %}
+
+    {% include 'user_button.html' %}
+
+    {% if messages %}
+      {% for msg in messages %}
+          <div class="alert alert-{{ msg.tags }} col-6 mx-auto rounded-1">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <h3 class="text-center">Add SI Shipped</h3>
+
+    <div class="row justify-content-center">
+        <form method="post" class="col-5 my-4 shadow p-4 rounded-2">
+            {% csrf_token %}
+            {{ form | crispy }}
+            <input type="submit" class="btn btn-primary d-block mx-auto" />
+        </form>
+    </div>
+
+
+</div>
+
+
+
+{% endblock %}

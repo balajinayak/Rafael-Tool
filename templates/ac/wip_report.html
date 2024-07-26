@@ -1,0 +1,241 @@
+{% extends 'base2.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+<div class="absolute left-[225px] top-[30px] right-4 min-h-[90vh] flex justify-center">
+    <div class="forms w-[100%] p-4">
+
+        {% if messages %}
+        {% for msg in messages %}
+            <div id="message_{{ forloop.counter }}" class="p-4 {% if msg.tags == 'error' %} bg-red-100 border-l-4 border-red-500 text-red-700 {% else %} bg-green-100 border-l-4 border-green-500 text-green-700 {% endif %}" role="alert">
+                <p class="font-bold">
+                    {% if msg.tags == 'error' %} error {% else %} success {% endif %}
+                </p>
+                <p>{{ msg }}</p>
+            </div>
+            <script>
+                setTimeout(function() {
+                    document.getElementById("message_{{ forloop.counter }}").style.display = 'none';
+                }, 5000);
+            </script>
+        {% endfor %}
+    {% endif %}
+
+    <div id="msg"></div>
+    <script>
+        function showAlert(message, format) {
+            setTimeout(function() {
+                document.getElementById("message_{{ forloop.counter }}").style.display = 'none';
+            }, 5000);
+            document.getElementById('msg').innerHTML=`
+                <div id="message_{{ forloop.counter }}" class="p-4 ${ format == 'error' ? 'bg-red-100 border-l-4 border-red-500 text-red-700' : format == 'success' ? 'bg-green-100 border-l-4 border-green-500 text-green-700' : 'bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700' }" role="alert">
+                    <p class="font-bold">
+                        ${ format == 'error' ? 'error' : 'success' }
+                    </p>
+                    <span id="alert_{{ forloop.counter }}">${ message }</span>
+                </div>
+            `
+        }
+    </script>
+
+        <div class="flex gap-10 mb-6">
+            <h1 class="text-2xl">WIP Reports</h1>
+            <div>
+                <button class="cursor-pointer mt-2 border-cyan-500 text-cyan-500" onclick="window.history.back();"><i class="fa-solid fa-circle-arrow-left"></i> Go Back</button>
+            </div>
+            <form method="get" action="{% url 'export_to_excel' %}" class="ps-20">
+                <input type="date" name="start_date" placeholder="Date" value="{{ request.GET.date }}" class="search text-gray-700 border border-gray-200 rounded py-1 px-4 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-[180px]"> -
+                <input type="date" name="end_date" placeholder="Date" value="{{ request.GET.date }}" class="search text-gray-700 border border-gray-200 rounded py-1 px-4 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-[180px]">
+                <button type="submit" class="border-cyan-500 text-cyan-500 px-4 py-1 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white">Export</button>
+            </form>
+        </div>
+
+        <hr class="my-6" />
+
+        <form method="get" class="w-[80%] mx-auto flex justify-center gap-2">
+            <input type="text" list="fg" name="fg_number" placeholder="FG Number" value="{{ request.GET.fg_number }}" autocomplete="off" class="search text-gray-700 border border-gray-200 rounded py-1 px-2 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-[180px]">
+            <input type="text" list="wo" name="work_order" placeholder="Work Order" value="{{ request.GET.work_order }}" autocomplete="off" class="search text-gray-700 border border-gray-200 rounded py-1 px-2 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-[180px]">
+            <!--
+            <input type="text" list="des" name="description" placeholder="Stage" value="{{ request.GET.description }}" autocomplete="off" class="search text-gray-700 border border-gray-200 rounded py-1 px-2 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-[180px]">
+            -->
+            <input type="date" name="date" placeholder="Date" value="{{ request.GET.date }}" autocomplete="off" class="search text-gray-700 border border-gray-200 rounded py-1 px-2 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-[180px]">
+            <button type="submit" class="border-cyan-500 text-cyan-500 px-4 py-1 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white">Filter</button>
+            <a href="{% url 'wip' %}" class="border-cyan-500 text-cyan-500 px-4 py-1 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white">Clear</a>
+            <datalist id="fg">
+                {% for f in fg %}
+                    <option>{{ f }}</option>
+                {% endfor %}
+            </datalist>
+            <datalist id="wo">
+                {% for w in wo %}
+                    <option>{{ w.work_order }}</option>
+                {% endfor %}
+            </datalist>
+            <datalist id="des">
+                {% for d in des %}
+                    <option>{{ d.description }}</option>
+                {% endfor %}
+            </datalist>
+        </form>
+<!--
+        <table class="w-[80%] my-[20px] mx-auto">
+            <tr class="border-b-2 border-cyan-500">
+                <th class="text-slate-500 pb-2">Sl No.</th>
+                <th class="text-slate-500 pb-2">FG Number</th>
+                <th class="text-slate-500 pb-2">Work Order</th>
+                <th class="text-slate-500 pb-2">Stage</th>
+                <th class="text-slate-500 pb-2">Quantity</th>
+            </tr>
+            {% if all_data %}
+                {% for data in all_data %}
+                    <tr class="border-b-2 border-slate-100 last:border-b-0 odd:bg-white even:bg-slate-100" title="{{ data.serial }}">
+                        <td class="py-2 text-center">{{ forloop.counter }}</td>
+                        <td class="py-2 text-center">{{ data.fg_number }}</td>
+                        <td class="py-2 text-center">{{ data.work_order }}</td>
+                        <td class="py-2 text-center">{{ data.description }}</td>
+                        <td class="py-2 text-center">{{ data.quantity }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center pt-5 text-red-700">No Data</td>
+                </tr>
+            {% endif %}
+        </table>
+
+        <hr />
+
+        <div class="w-[100%] my-[20px] mx-auto overflow-x-auto">
+        <table>
+            {% if all_data %}
+            {% for data in all_data %}
+                <tr class="border-b-2 border-slate-100 last:border-b-0 odd:bg-white even:bg-slate-100" title="{{ data.serial }}">
+                    <td class="py-2 text-center text-nowrap">
+                        {% if forloop.counter == 1 %}
+                        <h1 class="font-bold mb-2 mx-5">SL NO.</h1>
+                        <div>{{ forloop.counter }}</div>
+                        {% else %}
+                            {{ forloop.counter }}
+                        {% endif %}
+                    </td>
+                    <td class="py-2 text-center text-nowrap">
+                        {% if forloop.counter == 1 %}
+                            <h1 class="font-bold mb-2 mx-5">FG NUMBER</h1>
+                            <div>{{ data.fg_number }}</div>
+                        {% else %}
+                            {{ data.fg_number }}
+                        {% endif %}
+                    </td>
+                    <td class="py-2 text-center text-nowrap">
+                        {% if forloop.counter == 1 %}
+                        <h1 class="font-bold mb-2 mx-5">WORK ORDER</h1>
+                        <div>{{ data.work_order }}</div>
+                        {% else %}
+                            {{ data.work_order }}
+                        {% endif %}
+                    </td>
+                    <td class="py-2 text-center text-nowrap">
+                        {% if forloop.counter == 1 %}
+                        <h1 class="font-bold mb-2 mx-5">WO QTY</h1>
+                        <div>{{ data.wo_quantity }}</div>
+                        {% else %}
+                            {{ data.wo_quantity }}
+                        {% endif %}
+                    </td>
+                    {% if forloop.counter == 1 %}
+                        {% for f in fgs %}
+                        {% if f.fg_number == data.fg_number and f.work_order == data.work_order %}
+                            {% for stage in stages %}
+                                {% if stage.description == f.description %}
+                                    <td class="py-2 text-center text-nowrap">
+                                        <h1 class="font-bold mb-2 mx-5">{{ f.description }}</h1>
+                                        <div>{{ f.quantity }}</div>
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {% for f in fgs %}
+                        {% if f.fg_number == data.fg_number and f.work_order == data.work_order %}
+                            {% for stage in stages %}
+                                {% if stage.description == f.description %}
+                                    <td class="py-2 text-center text-nowrap">
+                                        {{ f.quantity }}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="5" class="text-center pt-5 text-red-700">No Data</td>
+            </tr>
+        {% endif %}
+        </table>
+
+        -->
+
+        <!--dummy-->
+        <div class="w-[100%] my-[20px] mx-auto overflow-x-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="px-6">FG Number</th>
+                        <th class="px-6">Work Order</th>
+                        <th class="px-6">WO Qty</th>
+                        {% for stage in stages %}
+                        <th class="px-6">{{ stage.description }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in data_list %}
+                    <tr class="border-b-2 border-slate-100 last:border-b-0 odd:bg-white even:bg-slate-100" title="{{ data.serial }}">
+                        <td class="text-center">{{ data.fg_number }}</td>
+                        <td class="text-center">{{ data.work_order }}</td>
+                        <td class="text-center">{{ data.wo_quantity }}</td>
+                        {% for stage in stages %}
+                            <td class="containerrr text-center">
+                                {% with matching_stage=None %}
+                                    {% for fg_stage in data.stages %}
+                                        {% if fg_stage.description == stage.description %}
+                                            {% with matching_stage=fg_stage %}
+                                                <small id="quantity">{{ fg_stage.quantity }}</small>
+                                            {% endwith %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if not matching_stage %}
+                                        <small>NA</small>
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!--dummy-->
+
+        </div>
+
+    </div><!--forms-->
+
+</div><!--page style-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+        const containers = document.querySelectorAll('.containerrr');
+        containers.forEach(container => {
+            const smallTags = container.getElementsByTagName('small');
+            const smallTagsArray = Array.from(smallTags);
+            smallTagsArray.slice(1).forEach(tag => tag.remove());
+        });
+</script>
+
+{% endblock %}

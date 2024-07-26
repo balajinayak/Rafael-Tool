@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block stylesheet %}
+<style>
+     
+      #ncrTable {
+        width: 20%; 
+        font-size: 8px; 
+       
+    }
+    .table{
+        width:30%;
+    }
+
+
+   
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="si-plan">
+
+    {% include 'left-nav.html' %}
+
+    {% include 'user_button.html' %}
+
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert alert-{{ msg.tags }} col-6 mx-auto rounded-1">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+    
+
+    <h4 class="text-center mb-5">NCR Tracker</h4>
+    {% if user.is_superuser %}
+    <a href="{% url 'add-ncr-tracking' %}" class="btn btn-primary">Create</a>
+     
+
+    <a href="{% url 'export_ncr_data' %}" class="btn btn-primary">Export</a>
+    <a href="{% url 'ncr_dump' %}" class="btn btn-primary">Add</a>
+    {% endif %}
+    <!--
+    <a href="{% url 'export_ncr_data_to_excel' %}" class="btn btn-primary">Export All</a>
+    -->
+    <div class="row my-5 justify-content-center">
+    <div class="container mt-4">
+        <div class="table-responsive">
+            <table class="table" id="ncrTable" width="40%" >
+                <thead>
+               <tr>
+                {% if user.is_superuser %}
+                       <th>ID</th>
+                       {% endif %}
+                        <th>PROJECT</th>
+                        <th>NCR NUMBER</th>
+                        <th>CCA Applicable</th>
+                        <th>INTERNAL FG P/N</th>
+                        <th>PO NUMBER</th>
+                        <th>NCR DETAILS</th>
+                        <th>PRODUCT SLNO</th>
+                        <th>Q&A</th>
+                        <th>NCR QTY</th>
+                        <th>PO QTY</th>
+                        <th>SHIP QTY</th>
+                        <th>OPEN QTY</th>
+                        <th>NCR STATUS</th>
+                        <th>APPROVAL STATUS</th>
+                        <th>REMARKS</th>
+                        <th>DATE</th>
+                  
+                    </tr>
+                </thead>
+                <tbody class="new-row">
+                    {% for d in data %}
+                    <tr>
+                        {% if user.is_superuser %}
+                        <td><a href="{% url 'update_ncrdump_view' d.id %}">{{ d.id }}</a></td>
+                        {% endif %}
+                        <td>{{ d.project }}</td>
+                        
+                        <td>{{ d.ncrno }}</td>
+                        <td>
+                        {% for ccaapp in d.ccaapp.split %}
+                            <p>{{ ccaapp }}</p>
+                        {% endfor %}
+                        </td>
+                        <td>
+                            {% for infgpn in d.infgpn.split %}
+                            <p>{{ infgpn }}</p>
+                        {% endfor %}
+                        </td>
+                        <td>
+                            {% for ponum in d.ponum.split %}
+                            <p>{{ ponum }}</p>
+                        {% endfor %}
+                        </td>
+                       
+                        <td>{{ d.ncrdetails }}</td>
+                        <td>{{ d.proslno }}</td>
+                        <td>{{ d.qa }}</td>
+                        <td>{{ d.ncrqty }}</td>
+                        <td>{{ d.poqty }}</td>
+                        <td>{{ d.shipqty }}</td>
+                        <td>{{ d.openqty }}</td>
+                        <td>{{ d.ncrstatus }}</td>
+                        <td>{{ d.approvalstatus }}</td>
+                        <td>{{ d.remarks }}</td>
+                        <td>{{ d.date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+    
+
+</div>
+
+<script>
+    
+    $(document).ready(function() {
+        $('#ncrTable').DataTable();
+    });
+
+</script>
+
+{% endblock %}

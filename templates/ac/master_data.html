@@ -1,0 +1,347 @@
+{% extends 'base2.html' %}
+
+
+{% block content %}
+
+<div class="absolute left-[225px] top-[30px] right-4 min-h-[90vh]e flex justify-center">
+    <div class="forms w-[100%] p-4">
+
+        {% if messages %}
+            {% for msg in messages %}
+                <div id="message_{{ forloop.counter }}" class="p-4 {% if msg.tags == 'error' %} bg-red-100 border-l-4 border-red-500 text-red-700 {% else %} bg-green-100 border-l-4 border-green-500 text-green-700 {% endif %}" role="alert">
+                    <p class="font-bold">
+                        {% if msg.tags == 'error' %} error {% else %} success {% endif %}
+                    </p>
+                    <p>{{ msg }}</p>
+                </div>
+                <script>
+                    setTimeout(function() {
+                        document.getElementById("message_{{ forloop.counter }}").style.display = 'none';
+                    }, 5000);
+                </script>
+            {% endfor %}
+        {% endif %}
+
+        <div id="msg"></div>
+        <script>
+            function showAlert(message, format) {
+                setTimeout(function() {
+                    document.getElementById("message_{{ forloop.counter }}").style.display = 'none';
+                }, 5000);
+                document.getElementById('msg').innerHTML=`
+                    <div id="message_{{ forloop.counter }}" class="p-4 ${ format == 'error' ? 'bg-red-100 border-l-4 border-red-500 text-red-700' : format == 'success' ? 'bg-green-100 border-l-4 border-green-500 text-green-700' : 'bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700' }" role="alert">
+                        <p class="font-bold">
+                            ${ format == 'error' ? 'error' : 'success' }
+                        </p>
+                        <span id="alert_{{ forloop.counter }}">${ message }</span>
+                    </div>
+                `
+            }
+        </script>
+
+        <div class="flex gap-10 mb-4">
+            <h1 class="text-2xl">Rafael Checklist Master Data</h1>
+            <div>
+                <button class="cursor-pointer mt-2 border-cyan-500 text-cyan-500" onclick="window.history.back();"><i class="fa-solid fa-circle-arrow-left"></i> Go Back</button>
+            </div>
+        </div>
+
+        <hr class="mb-4" />
+
+        <form method="post" id="fgForm">
+            {% csrf_token %}
+            <div class="grid grid-cols-5 items-center gap-x-4">
+                <div class="mb-2">
+                    <small>FG Part No</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="fg_number" id="id_fg_number" />
+                    <div class="fg_number text-red-500"></div>
+                </div>
+                <div class="mb-2">
+                    <small>Doc Ref No</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="doc_ref_no" id="id_doc_ref_no" />
+                    <div class="doc_ref_no text-red-500"></div>
+                </div>
+                <div class="mb-2">
+                    <small>Checklist Rev No</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="checklist_rev_no" id="id_checklist_rev_no" />
+                    <div class="checklist_rev_no text-red-500"></div>
+                </div>
+                <div class="mb-2">
+                    <small>Customer</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="customer" id="id_customer" />
+                    <div class="customer text-red-500"></div>
+                </div>
+                <div class="row-span-3 self-stretch relative">
+                    <small>Product Description</small>
+                    <textarea class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 absolute bottom-0 left-0 top-6" name="product_desc" id="id_product_desc"></textarea>
+                    <div class="product_desc text-red-500"></div>
+                </div>
+                <div class="mb-2">
+                    <small>Product Part No</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="product" id="id_product" />
+                    <div class="product text-red-500"></div>
+                </div>
+                <div class="mb-2">
+                    <small>Product Revision</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="pro_rev" id="id_pro_rev" />
+                    <div class="pro_rev text-red-500"></div>
+                </div>
+                {% if user.is_superuser %}
+                <div class="mt-3">
+                    <a href="{% url 'update_master' %}" class="text-blue-500"> <i class="fa-solid fa-pen"></i> Update Master</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-2 gap-10">
+            
+                <div>
+                    <h1 class="text-xl mb-4 mt-4">Master Frame</h1>
+                    <div class="grid grid-cols-2 xl:grid-cols-2 items-center gap-x-4">
+                        <div class="mb-2">
+                            <small>FG Part No</small>
+                            <input type="text" readonly class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" id="id_fg_number2" />
+                        </div>
+                        <div class="mb-2">
+                            <small>Project Name</small>
+                            <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="project_name" id="id_project_name" />
+                            <div class="project_name text-red-500 ms-[80px]"></div>
+                        </div>
+                        <div class="mb-2">
+                            <small>Security</small>
+                            <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="security" id="id_security" />
+                            <div class="security text-red-500 ms-[65px]"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h1 class="text-xl mb-4 mt-4">PDF Front Page</h1>
+                    <div class="grid grid-cols-2 xl:grid-cols-3 items-center gap-x-4">
+                        {{ form.marking }}
+                    </div>
+                </div>
+
+            </div><!--flex-->
+            
+            <hr class="my-6" />
+
+            <table class="w-full">
+                <thead>
+                    <tr class="text-center">
+                        <td class="text-sm">Order</td>
+                        <td class="text-sm">Para</td>
+                        <td class="text-sm">Description</td>
+                        <td class="text-sm">
+                            Notes
+                        </td>
+                        <td class="text-sm">Remarks</td>
+                    </tr>
+                    <tr class="text-center">
+                        <td class="text-sm"></td>
+                        <td class="text-sm"></td>
+                        <td class="text-sm"></td>
+                        <td class="text-sm">
+                            <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-full" name="common_remarks" id="id_common_remarks" placeholder="1. Common Note" />
+                        </td>
+                        <td class="text-sm"></td>
+                    </tr>
+                </thead>
+                <tbody id="new-items">
+                    <tr class="text-cencer">
+                        <td class="flex mt-3">
+                            <input type="checkbox" name="pdf_check" class="pdf_checkbox" />
+                            <input type="hidden" name="in_pdf" value="not_in_pdf" class="in_pdf" />
+                            <input type="text" readonly value="1" class="text-center w-[80px]" name="order" id="id_order" />
+                        </td>
+                        <td>
+                            <input type="text" readonly value="10" class="text-center w-[80px]" name="para" id="id_para" />
+                        </td>
+                        <td class="px-6">
+                            <input type="text" autocomplete="off" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-full" name="description" id="id_description" list="stage" />
+                            <datalist id="stage">
+                                {% for s in stages %}
+                                    <option>{{ s.description }}</option>
+                                {% endfor %}
+                            </datalist>
+                            <div class="description text-red-500"></div>
+                        </td>
+                        <td class="px-6">
+                            <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-full" name="remarks" id="id_remarks" placeholder="2. Note" />
+                        </td>
+                        <td class="px-6">
+                            <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-full" name="aps" id="id_aps" placeholder="SEE AP" />
+                        </td>
+                        <td>
+                            <select name="position" id="id_position" class="bg-white border text-gray-500 border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow">
+                                <option value="operator">Operator</option>
+                                <option value="inspector">Inspector</option>
+                                <option value="both">Both</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="process" id="id_process" class="bg-white border text-gray-500 border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow">
+                                <option value="common_process">Common</option>
+                                <option value="individual_process">Individual</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="flex justify-center mt-10">
+                <button type="button" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white mx-5" id="delete-item-btn">Delete Row</button>
+                <button type="button" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white mx-5" id="add-item-btn">New Row</button>
+                {% if user.is_superuser %}
+                    <input type="submit" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white mx-5" />
+                {% else %}
+                    <button type="button" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white" onclick="showAlert('You can not add this data.', 'error')">Submit</button>
+                {% endif %}
+            </div>
+
+        </form>
+
+    </div><!--forms-->
+</div><!--page style-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    const addItemButton = document.getElementById('add-item-btn');
+    const todoItemsContainer = document.getElementById('new-items');
+    var num = 1;
+    var para = 10;
+
+    // Function to attach event listener to checkboxes
+    function attachCheckboxEventListener() {
+        const in_pdf = document.querySelectorAll('.in_pdf');
+        const pdf_check = document.querySelectorAll('.pdf_checkbox');
+        for (let pc = 0; pc < pdf_check.length; pc++) {
+            pdf_check[pc].addEventListener('click', function(e) {
+                if (e.target.checked) {
+                    in_pdf[pc].value = "in_pdf";
+                } else {
+                    in_pdf[pc].value = "not_in_pdf";
+                }
+            });
+        }
+    }
+
+    addItemButton.addEventListener('click', function() {
+        para += 10;
+        const newItem = document.createElement('tr');
+        newItem.innerHTML = `
+            <tr class="text-center">
+                <td class="w-[10px] flex mt-3">
+                    <input type="checkbox" name="pdf_check" class="pdf_checkbox" />
+                    <input type="hidden" name="in_pdf" value="not_in_pdf" class="in_pdf" />
+                    <input type="text" value="${++num}" class="text-center w-[80px]" name="order" id="id_order" />
+                </td>
+                <td class="w-[10px]">
+                    <input type="text" readonly value="${para}" class="text-center w-[80px]" name="para" id="id_para" />
+                </td>
+                <td class="px-6">
+                    <input type="text" autocomplete="off" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-full" name="description" id="id_description" list="stage" />
+                    <datalist id="stage">
+                        {% for s in stages %}
+                            <option>{{ s.description }}</option>
+                        {% endfor %}
+                    </datalist>
+                    <div class="description text-red-500"></div>
+                </td>
+                <td class="px-6">
+                    <input type="Remarks" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-full" name="remarks" id="id_remarks" placeholder="2. Note" />
+                </td>
+                <td class="px-6">
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-full" name="aps" id="id_aps" placeholder="SEE AP" />
+                </td>
+                <td class="text-center">
+                    <select name="position" id="id_position" class="bg-white border text-gray-500 border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow">
+                        <option value="operator">Operator</option>
+                        <option value="inspector">Inspector</option>
+                        <option value="both">Both</option>
+                    </select>
+                </td>
+                <td class="text-center">
+                    <select name="process" id="id_process" class="bg-white border text-gray-500 border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow">
+                        <option value="common_process">Common</option>
+                        <option value="individual_process">Individual</option>
+                    </select>
+                </td>
+            </tr>
+        `;
+        todoItemsContainer.appendChild(newItem);
+
+        // After adding a new row, attach event listeners to checkboxes
+        attachCheckboxEventListener();
+    });
+
+    const deleteItemButton = document.getElementById('delete-item-btn');
+
+    deleteItemButton.addEventListener('click', function(){
+        const table = document.getElementById('new-items');
+        const lastRow = table.querySelector('tr:last-child');
+        if (lastRow) {
+            lastRow.remove();
+            para -= 10;
+            num--;
+        } else {
+            console.log("No rows to delete.");
+        }
+    });
+
+    // Initially attach event listeners to existing checkboxes
+    attachCheckboxEventListener();
+});
+
+
+
+    $(document).ready(function () {
+
+        $('#fgForm').submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/add-dummy/',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        window.location.reload();
+                    } else {
+                        displayFormErrors(response.errors);
+                    }
+                },
+                error: function (xhr, errmsg, err) {
+                    console.error(errmsg);
+                }
+            });
+        });
+
+        function displayFormErrors(errors) {
+            for (var field in errors) {
+                if (errors[field]) {
+                    if (errors[field].length != 0) {
+                        $(`.${field}`).text(errors[field]);
+                        $(`#id_${field}`).addClass('border-red-600');
+                    } else {
+                        $(`.${field}`).text('');
+                        $(`#id_${field}`).removeClass('border-red-600');
+                    }
+                }
+            }
+        }
+
+    });
+
+// main
+
+    document.getElementById('id_fg_number').addEventListener('keyup', function(e){
+        document.getElementById('id_fg_number2').value = e.target.value
+    })
+
+</script>
+
+{% endblock %}

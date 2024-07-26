@@ -1,0 +1,228 @@
+{% extends 'base2.html' %}
+
+
+{% block content %}
+
+<div class="absolute left-[225px] top-[30px] right-4 min-h-[90vh]e flex justify-center">
+    <div class="forms w-[100%] p-4">
+
+        {% if messages %}
+            {% for msg in messages %}
+                <div id="message_{{ forloop.counter }}" class="p-4 {% if msg.tags == 'error' %} bg-red-100 border-l-4 border-red-500 text-red-700 {% else %} bg-green-100 border-l-4 border-green-500 text-green-700 {% endif %}" role="alert">
+                    <p class="font-bold">
+                        {% if msg.tags == 'error' %} error {% else %} success {% endif %}
+                    </p>
+                    <p>{{ msg }}</p>
+                </div>
+                <script>
+                    setTimeout(function() {
+                        document.getElementById("message_{{ forloop.counter }}").style.display = 'none';
+                    }, 5000);
+                </script>
+            {% endfor %}
+        {% endif %}
+
+        <div id="msg"></div>
+        <script>
+            function showAlert(message, format) {
+                setTimeout(function() {
+                    document.getElementById("message_{{ forloop.counter }}").style.display = 'none';
+                }, 5000);
+                document.getElementById('msg').innerHTML=`
+                    <div id="message_{{ forloop.counter }}" class="p-4 ${ format == 'error' ? 'bg-red-100 border-l-4 border-red-500 text-red-700' : format == 'success' ? 'bg-green-100 border-l-4 border-green-500 text-green-700' : 'bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700' }" role="alert">
+                        <p class="font-bold">
+                            ${ format == 'error' ? 'error' : 'success' }
+                        </p>
+                        <span id="alert_{{ forloop.counter }}">${ message }</span>
+                    </div>
+                `
+            }
+        </script>
+
+        <div class="flex gap-10 mb-4">
+            <h1 class="text-2xl">Update Master Data</h1>
+            <div>
+                <button class="cursor-pointer mt-2 border-cyan-500 text-cyan-500" onclick="window.history.back();"><i class="fa-solid fa-circle-arrow-left"></i> Go Back</button>
+            </div>
+        </div>
+
+        <hr class="mb-4" />
+
+        <form method="get" class="mb-5">
+            <small>Serial</small>
+            <input type="text" value="{{ field.serial }}" class="appearance-none bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="serial" id="id_serial" />
+            <button type="submit" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white">Search</button>
+        </form>
+
+        <form method="post" id="fgForm">
+            {% csrf_token %}
+            <div class="grid grid-cols-5 items-center gap-x-4">
+                <div class="mb-2">
+                    <small>FG Part No</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="fg_number" id="id_fg_number" value="{{ field.fg_number }}" />
+                    <div class="fg_number text-red-500"></div>
+                </div>
+                <div class="mb-2">
+                    <small>Doc Ref No</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="doc_ref_no" id="id_doc_ref_no" value="{{ field.doc_ref_no }}" />
+                    <div class="doc_ref_no text-red-500"></div>
+                </div>
+                <div class="mb-2">
+                    <small>Checklist Rev No</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="checklist_rev_no" id="id_checklist_rev_no" value="{{ field.checklist_rev_no }}" />
+                    <div class="checklist_rev_no text-red-500"></div>
+                </div>
+                <div class="mb-2">
+                    <small>Customer</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="customer" id="id_customer" value="{{ field.customer }}" />
+                    <div class="customer text-red-500"></div>
+                </div>
+                <div class="row-span-3 self-stretch relative">
+                    <small>Product Description</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="product_desc" id="id_product_desc" value="{{ field.product_desc }}" />
+                    <div class="product_desc text-red-500"></div>
+                </div>
+                <div class="mb-2">
+                    <small>Product Part No</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="product" id="id_product" value="{{ field.product }}" />
+                    <div class="product text-red-500"></div>
+                </div>
+                <div class="mb-2">
+                    <small>Product Revision</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="pro_rev" id="id_pro_rev" value="{{ field.pro_rev }}" />
+                    <div class="pro_rev text-red-500"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-10">
+            
+                <div>
+                    <h1 class="text-xl mb-4 mt-4">Master Frame</h1>
+                    <div class="grid grid-cols-2 xl:grid-cols-2 items-center gap-x-4">
+                        <div class="mb-2">
+                            <small>Project Name</small>
+                            <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="project_name" id="id_project_name" value="{{ field.project_name }}" />
+                            <div class="project_name text-red-500 ms-[80px]"></div>
+                        </div>
+                        <div class="mb-2">
+                            <small>Security</small>
+                            <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="security" id="id_security" value="{{ field.security }}" />
+                            <div class="security text-red-500 ms-[65px]"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h1 class="text-xl mb-4 mt-4">PDF Front Page</h1>
+                    <div class="grid grid-cols-2 xl:grid-cols-3 items-center gap-x-4">
+                        {{ form.marking }}
+                    </div>
+                </div>
+
+            </div>
+
+            <hr class="my-6" />
+
+            <table class="w-full">
+                <thead>
+                    <tr class="text-center">
+                        <td class="text-sm">Order</td>
+                        <td class="text-sm">Para</td>
+                        <td class="text-sm">Description</td>
+                        <td class="text-sm">
+                            Notes
+                        </td>
+                        <td class="text-sm">Remarks</td>
+                    </tr>
+                    <tr class="text-center">
+                        <td class="text-sm"></td>
+                        <td class="text-sm"></td>
+                        <td class="text-sm"></td>
+                        <td class="text-sm">
+                            <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-full" name="common_remarks" id="id_common_remarks" placeholder="1. Common Note" value="{{ field.common_remarks }}" />
+                        </td>
+                        <td class="text-sm"></td>
+                    </tr>
+                </thead>
+                <tbody id="new-items">
+                    {% for r in rows %}                  
+                        <tr class="text-cencer">
+                            <td class="flex mt-3">
+                                
+                                <input type="checkbox" {% if r.in_pdf == 'in_pdf' %}checked {% endif %} name="pdf_check" class="pdf_checkbox" />
+                                <input type="hidden" name="in_pdf" value="not_in_pdf" class="in_pdf" />
+                                <input type="text" readonly class="text-center w-[80px]" name="order" id="id_order" value="{{ r.order }}" />
+                            </td>
+                            <td>
+                                <input type="text" readonly class="text-center w-[80px]" name="para" id="id_para" value="{{ r.para }}" />
+                            </td>
+                            <td class="px-6">
+                                <input type="text" class="appearance-none block bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-full" name="description" id="id_description" value="{{r.description}}" />
+                                <div class="description text-red-500"></div>
+                            </td>
+                            <td class="px-6">
+                                <input type="text" class="appearance-none block bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-full" name="remarks" id="id_remarks" placeholder="2. Note" value="{{ r.remarks }}" />
+                            </td>
+                            <td class="px-6">
+                                <input type="text" class="appearance-none block bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-full" name="aps" id="id_aps" placeholder="SEE AP" value="{{ r.aps }}" />
+                            </td>
+                            <td>
+                                <select name="position" id="id_position" class="bg-white border text-gray-500 border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow">
+                                    <option value="operator" {% if r.position == 'operator' %} selected {% endif %}>Operator</option>
+                                    <option value="inspector"  {% if r.position == 'inspector' %} selected {% endif %}>Inspector</option>
+                                    <option value="both"  {% if r.position == 'both' %} selected {% endif %}>Both</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="process" id="id_process" class="bg-white border text-gray-500 border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow">
+                                    <option value="common_process" {% if r.process == 'common_process' %} selected {% endif %}>Common</option>
+                                    <option value="individual_process" {% if r.process == 'individual_process' %} selected {% endif %}>Individual</option>
+                                </select>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        
+            <div class="flex justify-center mt-10">
+                <button type="submit" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white">Submit</button>
+            </div>
+
+        </form>
+
+    </div><!--forms-->
+</div><!--page style-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+<script>
+
+function attachCheckboxEventListener() {
+    const in_pdf = document.querySelectorAll('.in_pdf');
+    const pdf_check = document.querySelectorAll('.pdf_checkbox');
+
+    pdf_check.forEach((checkbox, index) => {
+        // Event listener for change event
+        checkbox.addEventListener('change', () => {
+            if (checkbox.checked) {
+                in_pdf[index].value = "in_pdf";
+            } else {
+                in_pdf[index].value = "not_in_pdf";
+            }
+        });
+
+        // Set initial value based on current checkbox state
+        if (checkbox.checked) {
+            in_pdf[index].value = "in_pdf";
+        } else {
+            in_pdf[index].value = "not_in_pdf";
+        }
+    });
+}
+
+// Ensure the function runs after the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', attachCheckboxEventListener);
+
+</script>
+
+{% endblock %}

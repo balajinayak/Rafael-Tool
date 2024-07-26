@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+
+{% block content %}
+
+<div class="login">
+    <form method="post" novalidate class="col-10 col-md-3 px-4 pt-2 pb-5 shadow rounded-2">
+        <h4 class="text-center text-white fw-bold py-4">Login</h4>
+        {% csrf_token %}
+        {{ form | crispy }}
+        <input type="submit" value="Login" class="btn btn-primary d-block mx-auto mt-4" />
+        <a class="d-block text-center py-3" href="{% url 'password_reset' %}">Password Reset</a>
+    </form>
+
+</div>
+
+{% endblock %}

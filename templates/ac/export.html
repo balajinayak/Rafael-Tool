@@ -1,0 +1,125 @@
+{% extends 'base2.html' %}
+{% load custom_filters %}
+
+
+{% block content %}
+
+<div class="absolute left-[225px] top-[30px] right-4 min-h-[90vh] flex justify-center">
+    <div class="forms w-[100%] p-4">
+
+        {% if messages %}
+        {% for msg in messages %}
+            <div id="message_{{ forloop.counter }}" class="p-4 {% if msg.tags == 'error' %} bg-red-100 border-l-4 border-red-500 text-red-700 {% else %} bg-green-100 border-l-4 border-green-500 text-green-700 {% endif %}" role="alert">
+                <p class="font-bold">
+                    {% if msg.tags == 'error' %} error {% else %} success {% endif %}
+                </p>
+                <p>{{ msg }}</p>
+            </div>
+            <script>
+                setTimeout(function() {
+                    document.getElementById("message_{{ forloop.counter }}").style.display = 'none';
+                }, 5000);
+            </script>
+        {% endfor %}
+    {% endif %}
+
+    <div id="msg"></div>
+    <script>
+        function showAlert(message, format) {
+            setTimeout(function() {
+                document.getElementById("message_{{ forloop.counter }}").style.display = 'none';
+            }, 5000);
+            document.getElementById('msg').innerHTML=`
+                <div id="message_{{ forloop.counter }}" class="p-4 ${ format == 'error' ? 'bg-red-100 border-l-4 border-red-500 text-red-700' : format == 'success' ? 'bg-green-100 border-l-4 border-green-500 text-green-700' : 'bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700' }" role="alert">
+                    <p class="font-bold">
+                        ${ format == 'error' ? 'error' : 'success' }
+                    </p>
+                    <span id="alert_{{ forloop.counter }}">${ message }</span>
+                </div>
+            `
+        }
+    </script>
+
+        <div class="flex gap-10 mb-6">
+            <h1 class="text-2xl">Report Export</h1>
+            <div>
+                <button class="cursor-pointer mt-2 border-cyan-500 text-cyan-500" onclick="window.history.back();"><i class="fa-solid fa-circle-arrow-left"></i> Go Back</button>
+            </div>
+        </div>
+
+        <hr class="my-6" />
+
+        <div class="mb-4">
+            <form method="get">
+                <!--
+                <input type="text" list="fgs" placeholder="FG Number" name="fg_number" class="input" value="{{ serial_search.fg_number | default:'' }}" autocomplete="off" />
+                <datalist id="fgs">
+                    {% with unique_fg=fg_list|remove_duplicates %}
+                        {% for l in unique_fg %}
+                            <option>{{ l }}</option>
+                        {% endfor %}
+                    {% endwith %}
+                </datalist>
+                <input type="text" list="works" placeholder="Work Order" name="work_order" class="input" value="{{ serial_search.work_order | default:'' }}" autocomplete="off" />
+                <datalist id="works">
+                    {% with unique_work=work_order_list|remove_duplicates %}
+                        {% for l in unique_work %}
+                            <option>{{ l }}</option>
+                        {% endfor %}
+                    {% endwith %}
+                </datalist>
+                -->
+                <input type="text" list="serials" placeholder="Serial Number" name="serial" class="search bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" value="{{ serial_search.serial | default:'' }}" autocomplete="off" />
+                <datalist id="serials">
+                    {% for l in serial_list %}
+                        <option>{{ l }}</option>
+                    {% endfor %}
+                </datalist>
+                <!--<input type="date" class="input" name="date" />-->
+                <button type="submit" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white">Search</button>
+            </form>
+        </div>
+
+        <table class="w-[50%]">
+            <tr>
+                <td class="font-bold">Serial Numbers</td>
+                <td></td>
+            </tr>
+                {% if serials %}
+                    {% for s in serials %}
+                        {% if s.customer_part_number %}
+                            <tr class="border-b-2">
+                                <td class="py-3">{{ s.serial }}</td>
+                                <td class="py-3 text-end">
+                                    <form method="post" action="{% url 'serial_export' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="export_serial" value="{{ s.serial }}" />
+                                        {% if user.is_superuser or user.is_supervisor %}
+                                            <button type="submit" class="bg-slate-700 text-white px-2 py-1 rounded-md">Export</button>
+                                        {% else %}
+                                            <button type="button" class="bg-slate-700 text-white px-2 py-1 rounded-md" onclick="showAlert('You don\'t have access to export this file.', 'error')">Export</button>
+                                        {% endif %}
+                                    </form>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <script>showAlert('Customer Order not assining.', 'error')</script>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p>No Submitted Serial Number</p>
+                {% endif %}
+
+        </table>
+    </div>    
+
+</div><!--page style-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+
+
+
+</script>
+
+{% endblock %}

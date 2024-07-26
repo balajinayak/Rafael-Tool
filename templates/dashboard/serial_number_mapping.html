@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+
+{% block content %}
+
+<div class="si-plan">
+
+    {% include 'left-nav.html' %}
+
+    {% include 'user_button.html' %}
+
+    {% if messages %}
+      {% for msg in messages %}
+          <div class="alert alert-{{ msg.tags }} col-6 mx-auto rounded-1">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <h4 class="text-center mb-5">Serial Number Mapping</h4>
+    {% if user.is_superuser %}
+    <div class="row mx-5">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="row px-5">
+                <div class="col">
+                    {{ form.work_order_number | as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ form.fg_part_number | as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ form.customer | as_crispy_field }}
+                </div>
+            </div>
+                <div class="row px-5">
+                <div class="col">
+                    {{ form.bare_pcb_serial_number | as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ form.cca_serial_number | as_crispy_field }}
+                </div>
+
+                <div class="col-auto">
+                    <input type="submit" value="Add" class="btn btn-primary" />
+                </div>
+            </div>
+        </form>
+    </div><!--form-->
+    {% endif %}
+    <div class="container mt-4">
+        <div class="table-responsive">
+            <table class="table" id="tb">
+                <thead>
+                    <th class="text-center">Work Order Number</th>
+                    <th class="text-center">FG Part Number</th>
+                    <th class="text-center">Customer</th>
+                    <th class="text-center">Bare PCB Serial Number</th>
+                    <th class="text-center">CCA Serial Number</th>
+                    <th class="text-center">Added Date</th>
+                </thead>
+                <tbody>
+                    {% for d in data %}
+                    <tr>
+                        <td>{{ d.woo_number }}</td>
+                        <td>{{ d.fg_pn }}</td>
+                        <td>{{ d.customer }}</td>
+                        <td>{{ d.bare_pcb_serial_number }}</td>
+                        <td>{{ d.cca_serial_number }}</td>
+                        <td>{{ d.date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    
+    $(document).ready(function() {
+        $('#tb').DataTable();
+    });
+
+
+</script>
+
+{% endblock %}

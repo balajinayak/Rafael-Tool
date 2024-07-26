@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+<!-- Lightbox2 CSS and JS links -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" integrity="sha512-F7U8kcA8xZlJ+nro5iMra19wZ3z1zvQmawl5RJvhODsmzxmuVfk2+jN/sFOJLK39MCbdCDY4vhyM2qssPGac1Q==" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js" integrity="sha512-DMEFrBTAveYVosBY0Ml0xFZa5A8Og2xjcP1vsqrMkyb0ds4vh/M+hu9mLv9Ew+al5A/i4heGUuZBRDQ9rPBdpA==" crossorigin="anonymous"></script>
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% block stylesheet %}
+<style>
+    .row.mb-3 {
+        margin-bottom: 2px;
+    }
+    .row.mb-3 .col {
+        padding: -1px; 
+    }
+    .first{
+        position: relative;
+        top:-1%;
+        left:-30%;
+
+    }
+    .second{
+        position: relative;
+        top:-35%;
+        left:30%;
+
+    }
+    .third{
+        position: relative;
+        top:-30%;
+        left:-30%;
+    }
+    .img-fluid{
+        position:relative;
+        top:-7%;
+        left:200%;
+        height:5vh;
+        width: 40%;
+    }
+    
+    
+</style>
+{% endblock %}
+<div class="si-plan">
+
+    {% include 'left-nav.html' %}
+
+    {% include 'user_button.html' %}
+
+    {% if messages %}
+      {% for msg in messages %}
+          <div class="alert alert-{{ msg.tags }} col-6 mx-auto rounded-1">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="my-2">
+        <div class="row justify-content-center">
+     
+            <div class="col-2">
+                {% if data.defect_image and data.defect_image.url %}
+                    <img src="{{ data.defect_image.url }}" class="img-fluid" data-bs-toggle="modal" data-bs-target="#image" />
+                {% endif %}
+            </div>
+            <div class="col-8">
+              <div class="first">
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Customer :</div>
+                    <div class="col">{{ data.customer }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Project :</div>
+                    <div class="col">{{ data.project }}</div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Product P/N :</div>
+                    <div class="col">{{ data.product_part_number }}</div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Brief Defect Description :</div>
+                    <div class="col">{{ data.brief_defect_description }}</div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Customer P/N :</div>
+                    <div class="col">{{ data.customer_part_number }}</div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Product Rev :</div>
+                    <div class="col">{{ data.product_rev }}</div>
+                </div>
+            </div>
+
+            <div class="second">
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Product Description :</div>
+                    <div class="col">{{ data.product_description }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Defect Cause :</div>
+                    <div class="col">{{ data.defect_cause }}</div>
+                </div>
+               
+          
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Source of Complaint :</div>
+                    <div class="col">{{ data.source_of_complaint }}</div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Quantity Affected :</div>
+                    <div class="col">{{ data.quantity_affected }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Reported on:</div>
+                    <div class="col">{{ data.original_date }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Updated on:</div>
+                    <div class="col">{{ data.reported_on }}</div>
+                </div>
+            </div>
+
+               <div class="third">
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Complaint Description :</div>
+                    <div class="col">{{ data.complaint_description }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">Root Cause :</div>
+                    <div class="col">{{ data.root_cause }}</div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-4 fw-bold">CAPA :</div>
+                    <div class="col">{{ data.ca_pa }}</div>
+                </div>
+                {% if user.is_superuser %}
+                <div class="row justify-content-center mt-3">
+                    <a href="{% url 'update_defect_library' data.pk %}" class="col-auto btn btn-primary">Update</a>
+                </div>
+                {% endif %}
+            </div>
+            
+            </div>
+        </div>
+       
+    </div>
+
+    {% if data.defect_image and data.defect_image.url %}
+    <div class="modal modal-lg" id="image">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content border-0" style="background-color: transparent !important;">
+                <div class="modal-body mx-auto">
+                    <img src="{{ data.defect_image.url }}" />
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+

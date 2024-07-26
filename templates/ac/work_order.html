@@ -1,0 +1,382 @@
+{% extends 'base2.html' %}
+{% load custom_filters %}
+
+
+{% block content %}
+
+<div class="absolute left-[225px] top-[30px] right-4 min-h-[90vh] flex justify-center">
+    <div class="forms w-[100%] p-4">
+
+        {% if messages %}
+            {% for msg in messages %}
+                <div id="message_{{ forloop.counter }}" class="p-4 {% if msg.tags == 'error' %} bg-red-100 border-l-4 border-red-500 text-red-700 {% else %} bg-green-100 border-l-4 border-green-500 text-green-700 {% endif %}" role="alert">
+                    <p class="font-bold">
+                        {% if msg.tags == 'error' %} error {% else %} success {% endif %}
+                    </p>
+                    <p>{{ msg }}</p>
+                </div>
+                <script>
+                    setTimeout(function() {
+                        document.getElementById("message_{{ forloop.counter }}").style.display = 'none';
+                    }, 5000);
+                </script>
+            {% endfor %}
+        {% endif %}
+
+        <div id="msg"></div>
+        <script>
+            function showAlert(message, format) {
+                setTimeout(function() {
+                    document.getElementById("message_{{ forloop.counter }}").style.display = 'none';
+                }, 5000);
+                document.getElementById('msg').innerHTML=`
+                    <div id="message_{{ forloop.counter }}" class="p-4 ${ format == 'error' ? 'bg-red-100 border-l-4 border-red-500 text-red-700' : format == 'success' ? 'bg-green-100 border-l-4 border-green-500 text-green-700' : 'bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700' }" role="alert">
+                        <p class="font-bold">
+                            ${ format == 'error' ? 'error' : 'success' }
+                        </p>
+                        <span id="alert_{{ forloop.counter }}">${ message }</span>
+                    </div>
+                `
+            }
+        </script>
+
+        <div class="flex gap-10 mb-4">
+            <h1 class="text-2xl">Work Order Assigning</h1>
+            <div>
+                <button class="cursor-pointer mt-2 border-cyan-500 text-cyan-500" onclick="window.history.back();"><i class="fa-solid fa-circle-arrow-left"></i> Go Back</button>
+            </div>
+        </div>
+
+        <form method="post" id="woForm" class="mt-5">
+            {% csrf_token %}
+            {% if serial_error %}
+                <small class="text-red-500">Serial Number already exists.</small>
+            {% endif %}
+            <div class="grid grid-cols-6 justify-between items-center gap-8">
+                <div class="">
+                    <small class="block">FG Part No</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="fg_number" id="id_fg_number" value="{% if form.fg_number.value %}{{ form.fg_number.value }}{% else %}{% endif %}" />
+                    <div class="text-sm text-red-500 text-nowrap">{{ form.fg_number.errors }}</div>
+                </div>
+                <div class="">
+                    <small class="block">Work Order</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="work_order" id="id_work_order" value="{% if form.work_order.value %}{{ form.work_order.value }}{% else %}{% endif %}" />
+                    <div class="text-sm text-red-500 text-nowrap">{{ form.work_order.errors }}</div>
+                </div>
+                <div class="">
+                    <small class="block">Starting</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="starting" id="id_starting" value="{% if form.starting.value %}{{ form.starting.value }}{% else %}{% endif %}" />
+                    <div class="text-sm text-red-500 text-nowrap">{{ form.starting.errors }}</div>
+                </div>
+                <div class="">
+                    <small class="block">WO Qty</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="wo_quantity" id="id_wo_quantity" oninput="quantity(this)" value="{% if form.wo_quantity.value %}{{ form.wo_quantity.value }}{% else %}{% endif %}" />
+                    <div class="text-sm text-red-500 text-nowrap">{{ form.wo_quantity.errors }}</div>
+                </div>
+                <div class="">
+                    <small class="block">Ending</small>
+                    <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="ending" id="id_ending" value="{% if form.ending.value %}{{ form.ending.value }}{% else %}{% endif %}" />
+                    <div class="text-sm text-red-500 text-nowrap">{{ form.ending.errors }}</div>
+                </div>
+                {% if user.is_superuser or user.is_supervisor %}
+                    <div>
+                        <button type="submit" name="add_work_order" value="work_order_submit" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white mt-4">Submit</button>
+                    </div>
+                {% else %}
+                    <div>
+                        <button type="button" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white mt-4" onclick="showAlert('You can not add this data.', 'error')">Submit</button>
+                    </div>
+                {% endif %}
+            </div>
+        </form>
+
+
+        <hr class="mb-4 mt-8" />
+
+
+        <h1 class="text-2xl py-4">Common Stage Submission</h1>
+
+        <div class="flex items-center gap-10 mb-16">
+            <form method="get" id="fgForm" class="pt-2">
+                {% csrf_token %}
+                <div class="flex gap-x-4">
+                    <div class="flex gap-4 items-center">
+                        <input type="text" list="work" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" placeholder="Work Order" id="get_work_order" name="get_work_order" value="{{ get_work_order | default:'' }}" autocomplete="off" />
+                        <datalist id="work">
+                            {% for w in work_list %}
+                            <option class="py-2">{{ w }}</option>
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="flex gap-4 items-center">
+                        <input type="text" list="fg" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" placeholder="FG Part No" id="get_fg_number" name="get_fg_number" value="{{ get_fg_number | default:'' }}" autocomplete="off" />
+                        <datalist id="fg">
+                            {% for f in fg_list %}
+                            <option class="py-2">{{ f }}</option>
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                    <div>
+                        <input type="submit" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white mx-5" value="search" />
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        {% if fg_model %}
+            <table class="w-[90%] my-[40px] mx-auto">
+                <tr class="border-b-2 border-cyan-500">
+                    <td class="py-4 font-bold">PARA</td>
+                    <td class="font-bold min-w-[300px]">DESCRIPTION</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% for nsc in submit_common %}
+                <tr class="border-b-2 border-slate-100 last:border-b-0">
+                    <td class="py-4">{{ nsc.para }}</td>
+                    <td>{{ nsc.description }}</td>
+                    {% if nsc.remarks %}
+                    <td class="py-1 text-center w-[100px]">
+                        <a href="#" onmouseover="openModal1(this)" onmouseleave="closeModal1()" data-id="{{ nsc.id }}" data-remark="{{nsc.remarks}}">See Note {{nsc.remarks|first_word}}</a>
+                    </td>
+                    <div id="modal1" class="hidden bg-slate-600 text-white border-2 border-slate-500 fixed top-[10%] left-[30%] w-[50%] p-5 rounded-xl">
+                        <div class="w-full flex justify-between">
+                            <p id="modal1-text"></p>
+                            <!--<i class="fa-solid fa-xmark cursor-pointer p-2" id="close1"></i>-->
+                        </div>
+                    </div>
+                    {% else %}
+                    <td></td>
+                    {% endif %}
+                    {% if nsc.aps == 'SEE AP' %}
+                    <td class="py-1 text-center w-[100px]">
+                        <a href="{% url 'front_page' nsc.id %}">{{ nsc.aps }}</a>
+                    </td>
+                    {% elif nsc.aps %}
+                        <td class="py-1 text-center w-[100px]">{{ nsc.aps }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    <td class="text-end">
+                        <span class="bg-green-500 text-white text-sm px-2 py-1 rounded-md">Submitted</span>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                {% if common %}
+                <tr class="border-b-2 border-slate-100 last:border-b-0">
+                    <td class="py-4">{{ common.para }}</td>
+                    <td>{{ common.description }}</td>
+                    {% if common.remarks %}
+                    <td class="py-1 text-center w-[100px]">
+                        <a href="#" onmouseover="openModal1(this)" onmouseleave="closeModal1()" data-id="{{ common.id }}" data-remark="{{common.remarks}}"> See Note {{common.remarks|first_word}}</a>
+                    </td>
+                    <div id="modal1" class="hidden bg-slate-600 text-white border-2 border-slate-500 fixed top-[10%] left-[30%] w-[50%] p-5 rounded-xl">
+                        <div class="w-full flex justify-between">
+                            <p id="modal1-text"></p>
+                            <!--<i class="fa-solid fa-xmark cursor-pointer p-2" id="close1"></i>-->
+                        </div>
+                    </div>
+                    {% else %}
+                    <td></td>
+                    {% endif %}
+                    {% if common.aps == 'SEE AP' %}
+                    <td class="py-1 text-center w-[100px]">
+                        <a href="{% url 'front_page' common.id %}">{{ common.aps }}</a>
+                    </td>
+                    {% elif common.aps %}
+                        <td class="py-1 text-center w-[100px]">{{ common.aps }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    <td class="text-end">
+                        <form method="post">
+                            {% csrf_token %}
+                            <button type="button" onclick="commonConsumption()" class="me-5 text-blue-500">Component Consumption</button>
+                            <input type="text" name="common_note" id="id_common_note" class="hidden border border-gray-100 bg-gray-200 text-gray-400 outline-none focus:bg-white  focus:border-cyan-400 py-2 me-5" />
+                            <input type="hidden" value="{{ common.pk }}" name="id" />
+                            {% if common.prev_submit %}<!--new-->
+                            {% if user.position == common.position or user.is_supervisor or user.is_superuser %}
+                                {% if user.is_submit is False and test_data.test is False %}
+                                    <button type="submit" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white" name="common_submit" value="commonSubmit">Submit</button>
+                                {% else %}
+                                    <button class="bg-red-500 px-4 py-2 rounded-lg" type="button" onclick="showAlert('You can try after sometimes', 'error')">Submit</button>
+                                {% endif %}
+                            {% elif common.position == 'both' %}
+                                {% if user.position == 'operator' %}
+                                    {% if common.operator_submit_user %}
+                                        <button class="bg-yellow-500 px-4 py-2 rounded-lg" type="button" onclick="showAlert('Already Submited, Inspector Submit is pending', 'warning')">Submitted</button>
+                                    {% else %}
+                                        {% if user.is_submit is False and test_data.test is False %}
+                                            <button type="submit" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white" name="common_submit" value="commonSubmit">Submit</button>
+                                        {% else %}
+                                            <button class="bg-red-500 px-4 py-2 rounded-lg" type="button" onclick="showAlert('You can try after sometimes', 'error')">Submit</button>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    {% if common.operator_submit_user %}
+                                        {% if user.is_submit is False and test_data.test is False %}
+                                            <button type="submit" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white" name="common_submit" value="commonSubmit">Sumbit</button>
+                                        {% else %}
+                                            <button class="bg-red-500 px-4 py-2 rounded-lg" type="button" onclick="showAlert('You can try after sometimes', 'error')">Submit</button>
+                                        {% endif %}
+                                    {% else %}
+                                        <button class="bg-yellow-500 px-4 py-2 rounded-lg" type="button" onclick="showAlert('Operator Submit is pending', 'warning')">Submit</button>
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                <button class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white" type="button" onclick="showAlert('Only {{ common.position }} can submit', 'warning')">Submit</button>
+                            {% endif %}
+                            {% else %}<!--new-->
+                            <button class="bg-slate-500 text-white px-4 py-2 rounded cursor-not-allowed">Submit</button>
+                            {% endif %}<!--new-->
+                        </form>
+                    </td>
+                </tr>
+                {% endif %}
+
+                {% for nsc in non_submit_common %}
+                <tr class="border-b-2 border-slate-100 last:border-b-0">
+                    <td class="py-4">{{ nsc.para }}</td>
+                    <td>{{ nsc.description }}</td>
+                    {% if nsc.remarks %}
+                    <td class="py-1 text-center w-[100px]">
+                        <a href="#" onmouseover="openModal1(this)" onmouseleave="closeModal1()" data-id="{{ nsc.id }}" data-remark="{{nsc.remarks}}">See Note {{nsc.remarks|first_word}}</a>
+                    </td>
+                    <div id="modal1" class="hidden bg-slate-600 text-white border-2 border-slate-500 fixed top-[10%] left-[30%] w-[50%] p-5 rounded-xl">
+                        <div class="w-full flex justify-between">
+                            <p id="modal1-text"></p>
+                            <!--<i class="fa-solid fa-xmark cursor-pointer p-2" id="close1"></i>-->
+                        </div>
+                    </div>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    {% if nsc.aps == 'SEE AP' %}
+                    <td class="py-1 text-center w-[100px]">
+                        <a href="{% url 'front_page' nsc.id %}">{{ nsc.aps }}</a>
+                    </td>
+                    {% elif nsc.aps %}
+                        <td class="py-1 text-center w-[100px]">{{ nsc.aps }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    <td class="text-end">
+                        <button class="bg-slate-500 text-white px-4 py-2 rounded cursor-not-allowed">Submit</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+
+
+        <hr class="mb-4 mt-8" />
+
+
+        <h1 class="text-2xl py-4">Customer Order Assigning</h1>
+
+        <div class="flex gap-8 mb-8">
+            <button class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white" onclick="customer_open()">Customer Order Assigning</button>
+            
+            <form method="post" id="customer" class="hidden gap-4 ms-4">
+                {% csrf_token %}
+                <input type="text" list="serials" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="customer_serial" placeholder="Serial No" autocomplete="off" />
+                <datalist id="serials">
+                    {% for s in serial_list %}
+                    <option class="py-2">{{ s }}</option>
+                    {% endfor %}
+                </datalist>
+                <input type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" id="customer_part_number" name="customer_part_number" placeholder="Customer PO No" />
+                {% if user.is_superuser or user.is_supervisor %}
+                    <button type="submit" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white" id="customerSubmit" name="customer_submit" value="customerSubmit">Submit</button>
+                {% else %}
+                    <button type="button" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white" onclick="showAlert('You can not add this data.', 'error')">Submit</button>
+                {% endif %}
+            </form>
+        </div>
+
+    </div><!--forms-->
+
+</div><!--page style-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+
+    const starting = document.getElementById('id_starting')
+    const ending = document.getElementById('id_ending')
+    const wo_quantity = document.getElementById('id_wo_quantity')
+    
+    function quantity(cdlNumber) {
+        let numericPart = parseInt(starting.value.slice(9));
+        numericPart = numericPart - 1
+        numericPart += parseInt(wo_quantity.value)
+        let incrementedCDL = starting.value.slice(0, 9) + numericPart.toString().padStart(3, '0');
+        ending.value = incrementedCDL
+    }
+
+
+
+    function customer_open(){
+        document.getElementById('customer').classList.remove('hidden')
+        document.getElementById('customer').classList.add('flex')
+    }
+
+    const work_order = document.getElementById('get_work_order')
+    const fg_number = document.getElementById('get_fg_number')
+    
+    work_order.addEventListener('keydown', function(e){
+        fetch('/get-fg-data/')
+        .then(response => response.json())
+        .then(data => {
+            const parsedData = JSON.parse(data)
+                parsedData.forEach((item) => {
+                    if(item.fields.work_order==work_order.value){
+                        fg_number.value = item.fields.fg_number
+                    }
+                    
+                    if(work_order.value==""){
+                        fg_number.value = ""
+                    }
+                })
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error)
+        });
+    });
+
+/*
+    var cpn = document.getElementById('customer_part_number').value
+    if(cpn.length()==0){
+        document.getElementById('customerSubmit').setAttribute('disabled')
+    }
+*/
+
+var modal1 = document.getElementById('modal1')
+
+var modal2 = document.getElementById('modal2')
+
+var close1 = document.getElementById('close1')
+
+function openModal1(e){
+    modal1.classList.toggle('hidden')
+    document.getElementById('modal1-text').innerHTML=e.dataset.remark
+}
+
+close1.addEventListener('click', function(){
+    modal1.classList.add('hidden')
+})
+
+function closeModal1(){
+    modal1.classList.add('hidden')
+}
+
+function commonConsumption(){
+    document.getElementById('id_common_note').classList.toggle('hidden')
+    document.getElementById('id_common_note').classList.toggle('mt-2')
+}
+
+</script>
+
+{% endblock %}

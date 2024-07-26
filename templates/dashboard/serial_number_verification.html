@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+
+{% block content %}
+
+<div class="si-plan">
+
+    {% include 'left-nav.html' %}
+
+    {% include 'user_button.html' %}
+
+    {% if messages %}
+      {% for msg in messages %}
+          <div class="alert alert-{{ msg.tags }} col-6 mx-auto rounded-1">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <h3 class="text-center">Serial Numbers</h3>
+    {% if user.is_superuser %}
+    <button type="button" id="add-row" class="btn btn-primary mx-1" data-bs-toggle="collapse" data-bs-target="#addSIPlan">Add Item</button>
+    {% endif %}
+    <a href="#snexcol"  class="btn btn-primary mx-1" data-bs-toggle="collapse">Export Serial Numbers</a>
+
+    <div class="collapse col-4 col-md-2 my-3" id="snexcol">
+      <form method="post" action="{% url 'serial_number_export' %}">
+        {% csrf_token %}
+        from <input type="date" name="datefrom" class="form-control" id="datePickerfrom" />
+        <br/>
+        to <input type="date" name="dateto" class="form-control" id="datePickerto" />
+        <input type="submit" class="d-block mx-auto btn btn-primary mt-3" />
+    </form>
+    </div>
+    {% if user.is_superuser %}
+    <div class="add-form shadow collapse my-4 px-5 py-4" id="addSIPlan">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-12 col-md-4 col-lg-2">
+                    {{ form.serial_number|as_crispy_field }}
+                </div>
+                <div class="col row">
+                    <div class="col-6 col-md-4 col-lg-3">
+                        {{ form.project|as_crispy_field }}
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3">
+                        {{ form.po_number|as_crispy_field }}
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3">
+                        {{ form.ncr_number|as_crispy_field }}
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3">
+                        {{ form.date|as_crispy_field }}
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3">
+                        {{ form.customer_part_number|as_crispy_field }}
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3">
+                        {{ form.cyient_part_number|as_crispy_field }}
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3">
+                        {{ form.quantity|as_crispy_field }}
+                    </div>
+                    <div class="row">
+                      <div class="col">
+                        <button type="button" class="btn btn-danger d-none clearDuplicateBtn">
+                          Clear Duplicate
+                        </button>
+                      </div>
+                        <div class="col-md-6">
+                            <p id="dup" class="text-danger"></p>
+                            <p id="dupSerial"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p id="dupField" class="text-danger"></p>
+                            <p id="dupFieldValues"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="submit" class="btn btn-primary d-block mx-auto submit-btn" />
+        </form>
+    </div>
+    {% endif %}
+    
+    <div class="table-responsive shadow p-4 my-4">
+        <table class="table" id="snTable">
+            <thead>
+                <tr>
+                    <th>Sl No</th>
+                    <th>CCA Serial Numbers</th>
+                    <th>Project</th>
+                    <th>PO Number</th>
+                    <th>NCR Number</th>
+                    <th>Date</th>
+                    <th>Customer p/n</th>
+                    <th>Cyient p/n</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody class="new-row">
+                {% for sr in ser_numbers %}
+                <tr> 
+                    <td>{{ sr.id }}</td>
+                    <td>
+                        {% for serial_number in sr.serial_number.split %}
+                            <p>{{ serial_number }}</p>
+                        {% endfor %}
+                    </td>
+                    <td>{{ sr.project }}</td>
+                    <td>{{ sr.po_number }}</td>
+                    <td>{{ sr.ncr_number }}</td>
+                    <td>{{ sr.date }}</td>
+                    <td>{{ sr.customer_part_number }}</td>
+                    <td>{{ sr.cyient_part_number }}</td>
+                    <td>{{ sr.quantity }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+<script>
+
+let ser_vals = [];
+let serNum = document.getElementById("id_serial_number");
+
+const url = '/get-serial-numbers';
+
+// Fetch serial numbers from the server and populate ser_vals
+fetch(url)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    ser_vals = data.map(item => item.serial);
+  })
+  .catch(error => {
+    console.error('There was a problem with the fetch operation:', error);
+    // Handle the error, e.g., display an error message to the user
+  });
+
+serNum.addEventListener("input", function(e) {
+
+  const textValue = serNum.value.trim().toUpperCase();
+  const values = textValue.split('\n');
+
+  const duplicateValues = findDuplicates(ser_vals, values);
+
+  const duplicateText = findDuplicateField(values);
+
+
+  if(duplicateValues.length==0){
+    document.getElementById("dup").innerHTML=""
+    document.getElementById("dupSerial").innerHTML=""
+    document.querySelector('.submit-btn').classList.remove("disabled")
+  }else if(duplicateValues.length>0){
+    document.getElementById("dup").innerHTML="Duplicate Serial Numbers"
+    document.getElementById("dupSerial").innerHTML=duplicateValues
+    document.querySelector('.submit-btn').classList.add("disabled")
+    serNum.readOnly = true; //changes
+    cdb.classList.remove('d-none')//changes
+  }
+
+  if(duplicateText.length==0){
+    document.getElementById("dupField").innerHTML=""
+    document.getElementById("dupFieldValues").innerHTML=""
+    document.querySelector('.submit-btn').removeAttribute('disabled')
+  }else if(duplicateText.length>0){
+    document.getElementById("dupField").innerHTML="You have already entered this serial number"
+    document.getElementById("dupFieldValues").innerHTML=duplicateText
+    document.querySelector('.submit-btn').setAttribute('disabled',true)
+    serNum.readOnly = true;  //changes
+    cdb.classList.remove('d-none')//changes
+  }
+
+  
+});
+
+
+function findDuplicates(arr1, arr2) {
+  return arr1.filter(item => arr2.includes(item));
+}
+
+function findDuplicateField(arr) {
+  const duplicates = {};
+  const duplicateWords = [];
+
+  for (let i = 0; i < arr.length; i++) {
+    const word = arr[i];
+    if (duplicates[word]) {
+      duplicateWords.push(word);
+    } else {
+      duplicates[word] = true;
+    }
+  }
+
+  return duplicateWords;
+}
+var cdb = document.querySelector('.clearDuplicateBtn');
+cdb.addEventListener('click', function(){
+  lines = serNum.value.split('\n');
+  lines.pop()
+  serNum.value=lines.join('\n')
+  serNum.readOnly=false
+  cdb.classList.add('d-none')
+  document.getElementById("dup").innerHTML=""
+  document.getElementById("dupSerial").innerHTML=""
+  document.querySelector('.submit-btn').classList.remove("disabled")
+  document.getElementById("dupField").innerHTML=""
+  document.getElementById("dupFieldValues").innerHTML=""
+  document.querySelector('.submit-btn').removeAttribute('disabled')
+})//changes
+
+$(document).ready(function() {
+    $('#snTable').DataTable();
+});
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    var noPasteInput = document.querySelector("#id_serial_number");
+
+    noPasteInput.addEventListener("paste", function(e) {
+        e.preventDefault();
+        alert("Pasting is not allowed in this field.");
+    });
+
+});
+
+
+  var currentDate = new Date().toISOString().split('T')[0];
+
+  document.getElementById('datePickerSL').setAttribute('max', currentDate);
+
+</script>
+
+
+
+{% endblock %}

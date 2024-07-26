@@ -1,0 +1,12 @@
+{% load static %}
+
+
+<div class="user-button">
+    <small>welcome <b> {{ user.username | capfirst }} </b></small>
+    {% if user.is_authenticated %}
+    <a href="{% url 'logout' %}" class="ms-1 btn btn-light border btn-sm"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    {% else %}
+    <a href="{% url 'login' %}" class="ms-1 btn btn-light border btn-sm"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+    {% endif %}
+</div>
+

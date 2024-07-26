@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>PDF Title</title>
+    <style>
+        /* Define page size and margins */
+        /* Define styles for each page */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            size: A4;
+            margin: 5px;
+            page-break-after: always;
+        }
+
+        /* Additional styles for content */
+        .content {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        td{
+            border-bottom: 1px solid rgb(180, 179, 179);
+            border-right: 1px solid rgb(180, 179, 179);
+        }
+        .footer{
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page 1 -->
+    <div class="page">
+        <div class="content">
+            <div>
+                <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.fg_number }}</small>
+                <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.project_name }}</small>
+            </div>
+            <table width="100%" cellpadding="10" cellspacing="0">
+                <tr>
+                    <td style="font-size: 14px; font-weight: bold; border: 1px solid gray;">DOC NO : {{ fg.doc_ref_no }}</td>
+                    <td align="center" style="color:rgb(41, 41, 186); font-size: 16px; font-weight: bold; border: 1px solid gray; min-width: 400px;">AP - Assembly Procedure</td>
+                    <td rowspan="2" align="center" style="font-weight:bold; font-size: 14px; border: 1px solid gray;">
+                        <div class="text-center">
+                            {% if fg.security %}
+                                SECURITY CLASS : <br /> {{ fg.security }}
+                            {% endif %}
+                        </div>
+                        <img src="https://www.cyientdlm.com/hs-fs/hubfs/dlm/CyientDLM.png?width=1073&height=609&name=CyientDLM.png" alt="CyientDLM Image" style="width: 60px; margin-left: 10px; margin-top: 5px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px; border: 1px solid gray;">DOC REV NO : {{ fg.checklist_rev_no }}</td>
+                    <td align="center" style="color:rgb(173, 25, 25); font-size: 18px; font-weight: bold; border: 1px solid gray; min-width: 400px;">{{ fg.product_desc | upper }}</td>
+                </tr>
+            </table>
+
+            <h4 style="text-decoration: underline;">Marking</h4>
+            {{ dummy.marking | safe }}
+            <p>Barcode Content</p>
+            <ul>
+                <li>BARCODE 1 : S/N</li>
+                <li>BARCODE 2 : P/N</li>
+                <li>BARCODE 3 : PR. Rev.</li>
+            </ul>
+        </div>
+    </div><!-- Page 1 -->
+
+    <!-- Page 2 -->
+    <div class="page">
+        <div class="content">
+            <div>
+                <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.fg_number }}</small>
+                <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.project_name }}</small>
+            </div>
+            <table width="100%" cellpadding="10" cellspacing="0">
+                <tr>
+                    <td style="font-size: 14px; font-weight: bold; border: 1px solid gray;">DOC NO : {{ fg.doc_ref_no }}</td>
+                    <td align="center" style="color:rgb(41, 41, 186); font-size: 16px; font-weight: bold; border: 1px solid gray; min-width: 400px;">AC - Assembly Board Check List</td>
+                    <td rowspan="2" align="center" style="font-weight:bold; font-size: 14px; border: 1px solid gray;">
+                        <div class="text-center">
+                            {% if fg.security %}
+                                SECURITY CLASS : <br /> {{ fg.security }}
+                            {% endif %}
+                        </div>
+                        <img src="https://www.cyientdlm.com/hs-fs/hubfs/dlm/CyientDLM.png?width=1073&height=609&name=CyientDLM.png" alt="CyientDLM Image" style="width: 60px; margin-left: 10px; margin-top: 5px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px; border: 1px solid gray;">DOC REV NO : {{ fg.checklist_rev_no }}</td>
+                    <td align="center" style="color:rgb(173, 25, 25); font-size: 18px; font-weight: bold; border: 1px solid gray; min-width: 400px;">{{ fg.product_desc | upper }}</td>
+                </tr>
+            </table>
+
+            <table width="100%" style="margin-top: 20px; border: 1px solid black;" cellpadding="10" cellspacing="0">
+                <tr style="font-weight: bold;">
+                    <td style="border-right:0px" colspan="6">PRODUCT NO. : {{ fg.product }}</td>
+                    <td style="border-right:0px">{{ barcode_svgs.0 | safe }}</td>
+                    <td style="border-right:0px">{{ barcode_svgs.1 | safe }}</td>
+                </tr>
+                <tr style="font-weight: bold;">
+                    <td style="font-size: 14px;">Stage No.</td>
+                    <td style="font-size: 14px;">PARA</td>
+                    <td style="font-size: 14px;">DESCRIPTION</td>
+                    <td style="font-size: 14px;">OPERATOR</td>
+                    <td style="font-size: 14px; min-width: 100px;">DATE</td>
+                    <td style="font-size: 14px;">INSPECTOR</td>
+                    <td style="font-size: 14px; min-width: 100px;">DATE</td>
+                    <td style="font-size: 14px;">REMARK</td>
+                </tr>
+                {% for d in data %}
+                    <tr>
+                        <td style="font-size: 12px;">{{ d.order }}</td>
+                        <td style="font-size: 12px;">{{ d.para }}</td>
+                        <td style="font-size: 12px;">{{ d.description }}</td>
+
+                        {% if d.operator_submit_user %}
+                            <td style="font-size: 12px;">{{ d.operator_submit_user }}</td>
+                        {% else %}
+                            <td style="background:lightgray;"></td>
+                        {% endif %}
+
+                        {% if d.operator_timestamp %}
+                        <td style="font-size: 12px">{{ d.operator_timestamp | date:"d-M-Y" }}</td>
+                        {% else %}
+                            <td style="background:lightgray;"></td>
+                        {% endif %}
+
+                        {% if d.inspector_submit_user %}
+                        <td style="font-size: 12px;">{{ d.inspector_submit_user }}</td>
+                        {% else %}
+                            <td style="background:lightgray;"></td>
+                        {% endif %}
+
+                        {% if d.inspector_timestamp %}
+                        <td style="font-size: 12px">{{ d.inspector_timestamp | date:"d-M-Y" }}</td>
+                        {% else %}
+                            <td style="background:lightgray;"></td>
+                        {% endif %}
+
+                        <td style="font-size: 12px; text-align: center; height: 40px;">
+                            {% if d.aps %} 
+                                {{ d.aps }} 
+                            {% endif %} 
+                            {% if d.aps and d.get_remarks_number %}
+                                 & 
+                            {% endif %} 
+                            {% if d.get_remarks_number %}
+                             SEE NOTE <br /> {{ d.get_remarks_number }}
+                             {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+        </div>
+    </div><!-- Page 2 -->
+
+    <!-- Page 3 -->
+    <div class="page">
+        <div class="content">
+            <div>
+                <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.fg_number }}</small>
+                <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.project_name }}</small>
+            </div>
+            <table width="100%" cellpadding="10" cellspacing="0">
+                <tr>
+                    <td style="font-size: 14px; font-weight: bold; border: 1px solid gray;">DOC NO : {{ fg.doc_ref_no }}</td>
+                    <td align="center" style="color:rgb(41, 41, 186); font-size: 16px; font-weight: bold; border: 1px solid gray; min-width: 400px;">AC - Assembly Board Check List</td>
+                    <td rowspan="2" align="center" style="font-weight:bold; font-size: 14px; border: 1px solid gray;">
+                        <div class="text-center">
+                            {% if fg.security %}
+                                SECURITY CLASS : <br /> {{ fg.security }}
+                            {% endif %}
+                        </div>
+                        <img src="https://www.cyientdlm.com/hs-fs/hubfs/dlm/CyientDLM.png?width=1073&height=609&name=CyientDLM.png" alt="CyientDLM Image" style="width: 60px; margin-left: 10px; margin-top: 5px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px; border: 1px solid gray;">DOC REV NO : {{ fg.checklist_rev_no }}</td>
+                    <td align="center" style="color:rgb(173, 25, 25); font-size: 18px; font-weight: bold; border: 1px solid gray; min-width: 400px;">{{ fg.product_desc | upper }}</td>
+                </tr>
+            </table>
+
+            <table width="100%" style="margin-top: 20px; border: 1px solid black;" cellpadding="10" cellspacing="0">
+                <tr style="font-weight: bold;">
+                    <td style="border-right:0px">PRODUCT NO. : {{ fg.product }}</td>
+                    <td style="border-right:0px;"></td>
+                    <td style="border-right:0px;" align="right">
+                        <span>{{ barcode_svgs.0 | safe }}</span>
+                        <span>{{ barcode_svgs.1 | safe }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size: 18px;" colspan="3">
+                        <p style="text-decoration: underline; font-size: 20px; font-weight: bold;">NOTES</p>
+                        <small style="padding:5px 0px;">{{ fg.common_remarks }}</small>
+                        {% for r in remarks %}
+                            <small style="display: block; padding:5px 0px;">{{ r.remarks }}</small>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>S/N : {{ barcode_svgs.2 | safe }}</td>
+                    <td>ORDER NO. : {{ fg.customer_part_number }} </td>
+                    <td>LABEL NO. :</td>
+                </tr>
+                <tr>
+                    <td>CHECKED BY : </td>
+                    <td>SIGNATURE</td>
+                    <td>Date : </td>
+                </tr>
+            </table>
+
+        </div>
+    </div><!-- Page 3 -->
+
+    <!-- Page 4 -->
+    <div class="page">
+        <div class="content">
+            <div>
+                <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.fg_number }}</small>
+                <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.project_name }}</small>
+            </div>
+            <table width="100%" cellpadding="10" cellspacing="0">
+                <tr>
+                    <td style="font-size: 14px; font-weight: bold; border: 1px solid gray;">DOC NO : {{ fg.doc_ref_no }}</td>
+                    <td align="center" style="color:rgb(41, 41, 186); font-size: 16px; font-weight: bold; border: 1px solid gray; min-width: 400px;">AC - Assembly Board Check List</td>
+                    <td rowspan="2" align="center" style="font-weight:bold; font-size: 14px; border: 1px solid gray;">
+                        <div class="text-center">
+                            {% if fg.security %}
+                                SECURITY CLASS : <br /> {{ fg.security }}
+                            {% endif %}
+                        </div>
+                        <img src="https://www.cyientdlm.com/hs-fs/hubfs/dlm/CyientDLM.png?width=1073&height=609&name=CyientDLM.png" alt="CyientDLM Image" style="width: 60px; margin-left: 10px; margin-top: 5px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px; border: 1px solid gray;">DOC REV NO : {{ fg.checklist_rev_no }}</td>
+                    <td align="center" style="color:rgb(173, 25, 25); font-size: 18px; font-weight: bold; border: 1px solid gray; min-width: 400px;">{{ fg.product_desc | upper }}</td>
+                </tr>
+            </table>
+
+            <table width="100%" style="margin-top: 20px; border: 1px solid black;" cellpadding="10" cellspacing="0">
+                <tr style="font-weight: bold;">
+                    <td style="border-right:0px">PRODUCT NO. : {{ fg.product }}</td>
+                    <td style="border-right:0px;"></td>
+                    <td style="border-right:0px;" align="right">
+                        <span>{{ barcode_svgs.0 | safe }}</span>
+                        <span>{{ barcode_svgs.1 | safe }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size: 18px;" colspan="3">
+                        {% if common_note %}
+                        <p style="text-decoration: underline; font-size: 20px; font-weight: bold;">COMPONENT CONSUMPTION</p> 
+                        {% for c in common_note %}
+                            {% if c.common_note %}
+                                <small style="font-weight: bold; font-size: 14px; display: block;">{{ forloop.counter }}. {{ c.description }}</small>
+                                <small style="padding-left: 15px; padding-bottom: 20px;">{{ c.common_note }}</small>
+                            {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>S/N : {{ barcode_svgs.2 | safe }}</td>
+                    <td>ORDER NO. : {{ fg.customer_part_number }} </td>
+                    <td>LABEL NO. :</td>
+                </tr>
+                <tr>
+                    <td>CHECKED BY : </td>
+                    <td>SIGNATURE</td>
+                    <td>Date : </td>
+                </tr>
+            </table>
+            <div class="footer">
+                <small style="display: block; border-bottom: 1px solid rgb(29, 29, 122); text-align: center;">Document Pages: Page 4 of 4</small>
+                <small style="display: block; border-bottom: 2px solid black; text-align: center; padding: 5px 0px; font-size: 10px;">Rafael: P.O. Box2250, Haifa 31021, ISRAEL</small>
+                <small style="display: block;">Doc ID: {{ fg.doc_ref_no }}     <span style="margin-left: 65px;">Revision: {{ fg.doc_ref_no }}</span></small>
+                <small style="display: block;">Doc Status: Released    <span style="margin-left: 45px;">Status Date:</span></small>
+                <small style="display: block;">one</small>
+            </div>
+        </div>
+    </div><!-- Page 4 -->
+
+</body>
+</html>

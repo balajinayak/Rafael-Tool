@@ -1,0 +1,76 @@
+{% extends 'base2.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="w-full h-[100vh] flex flex-col gap-10 items-center justify-center bg-gradient-to-br from-cyan-400 to-cyan-700">
+    <div>
+        <form method="post" class="rounded-md pr-10 pl-5 py-5 shadow shadow-white" novalidate>
+            {% csrf_token %}
+            <div class="mb-8">
+                <i class="fa-regular fa-user relative left-8 text-white"></i>
+                <input type="text" name="username" placeholder="Username" class="bg-transparent border border-white rounded-md py-3 pl-10 pr-4 text-white shadow shadow-white placeholder-white focus:outline-none focus:shadow-md focus:shadow-cyan-200" autocomplete="off" />
+                <p class="pl-9 text-white">{{ form.username.errors }}</p>
+            </div>
+            <div class="mb-8">
+                <i class="fa-solid fa-lock relative left-8 text-white" id="id_psw1_icon"></i>
+                <input type="password" name="password1" id="id_password1" placeholder="Password" class="bg-transparent border border-white rounded-md py-3 pl-10 pr-4 text-white shadow shadow-white placeholder-white focus:outline-none focus:shadow-md focus:shadow-cyan-200" autocomplete="off" />
+                <p class="ps-9 text-white">{{ form.password1.errors }}</p>
+            </div>
+            <div class="mb-8">
+                <i class="fa-solid fa-lock relative left-8 text-white" id="id_psw2_icon"></i>
+                <input type="password" name="password2" id="id_password2" placeholder="Confirm Password" class="bg-transparent border border-white rounded-md py-3 pl-10 pr-4 text-white shadow shadow-white placeholder-white focus:outline-none focus:shadow-md focus:shadow-cyan-200" autocomplete="off" />
+                <p class="ps-9 text-white">{{ form.password2.errors }}</p>
+            </div>
+            <div class="mb-8">
+                <select name="position" class="bg-transparent border border-white text-white rounded-md w-[92%] ms-5 py-3 shadow shadow-white focus:outline-none focus:shadow-md focus:shadow-cyan-200">
+                    <option value="operator" class="text-gray-600">Operator</option>
+                    <option value="inspector" class="text-gray-600">Inspector</option>
+                </select>
+            </div>
+            <div class="mb-5 ps-7 flex items-center gap-2">
+                <input type="checkbox" name="is_superuser" class="size-4" />
+                <small class="text-md text-white">Admin</small>
+            </div>
+            <div class="mb-8 ps-7 flex items-center gap-2">
+                <input type="checkbox" name="is_supervisor" class="size-4" />
+                <small class="text-md text-white">Supervisor</small>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="bg-transparent border border-white rounded-md py-1 px-4 text-white shadow shadow-white">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    var psw1 = document.getElementById('id_password1')
+    var psw2 = document.getElementById('id_password2')
+    var psw1_icon = document.getElementById('id_psw1_icon')
+    var psw2_icon = document.getElementById('id_psw2_icon')
+
+    psw1.addEventListener('keyup', function(e){
+        if(e.target.value.length > 0){
+            psw1_icon.classList.remove('fa-lock')
+            psw1_icon.classList.add('fa-lock-open')
+        }else{
+            psw1_icon.classList.remove('fa-lock-open')
+            psw1_icon.classList.add('fa-lock')
+        }
+    })
+
+    psw2.addEventListener('keyup', function(e){
+        if(e.target.value.length > 0){
+            psw2_icon.classList.remove('fa-lock')
+            psw2_icon.classList.add('fa-lock-open')
+        }else{
+            psw2_icon.classList.remove('fa-lock-open')
+            psw2_icon.classList.add('fa-lock')
+        }
+    })
+
+
+</script>
+
+{% endblock %}

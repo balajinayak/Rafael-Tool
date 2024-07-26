@@ -1,0 +1,186 @@
+
+
+
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="si-plan">
+
+    {% include 'left-nav.html' %}
+
+    {% include 'user_button.html' %}
+
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert alert-{{ msg.tags }} col-6 mx-auto rounded-1">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+
+
+    <h4 class="text-center mb-5">Add NCR </h4>
+    {% if request.user.username == "VB00705" %}
+    <button type="button" class="btn btn-primary" id="showUploadFormBtn">Upload By Excel</button>
+    <div id="uploadFormContainer" class="mt-3" style="display: none;">
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_excel_view' %}" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <input type="file" class="form-control" name="excel_file" accept=".xls, .xlsx" required>
+                <div class="invalid-feedback">Please choose an Excel file.</div>
+            </div>
+            <button type="submit" class="btn btn-success">Upload</button>
+        </form>
+    </div>
+    {% endif %}
+    <div class="row my-5 justify-content-center">
+        <form method="post" novalidate class="col-11 shadow px-5 py-4" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row mb-4">
+                <div class="col-4">
+                    {{ form.project | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.date | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.ncrno | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.ccaapp | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.infgpn | as_crispy_field }}
+                </div>
+               
+                <div class="col-4">
+                    {{ form.proslno | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.ncrqty | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.ncrstatus | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.approvalstatus | as_crispy_field }}
+                </div>
+              
+                <div class="col-4">
+                    {{ form.ponum | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.ncrdetails | as_crispy_field }}
+                </div>
+              
+                <div class="col-4">
+                    {{ form.remarks | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.qa | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.poqty | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.shipqty | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.openqty | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ form.add_qty | as_crispy_field }}
+                </div>
+
+
+            <hr />
+
+            <input type="submit" class="btn btn-primary d-block mx-auto" />
+        </form>
+   
+    <div class="container mt-4">
+        <div class="table-responsive">
+            <table class="table" id="ncrTable">
+                <thead>
+                         <tr>
+                            {% if user.is_superuser %}
+                        <th>Sl No</th>
+                        {% endif %}
+                        <th>PROJECT</th>
+                        <th>SERIAL NUMBER</th>
+                        <th>DATE</th>
+                        <th>NCR NUMBER</th>
+                        <th>CUSTOMER P/N</th>
+                        <th>INTERNAL FG P/N</th>
+                        <th>PO NUMBER</th>
+                        <th>DETAILS</th>
+                        <th>QUANTITY</th>
+                        <th>REMAINING QTY</th>
+                        <th>CONSUMED QTY</th>
+                        <th>ADDED QUANTITY</th>
+                        <th>NCR STATUS</th>
+                        <th>APPROVAL STATUS</th>
+                        <th>APPROVAL DATE</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody class="new-row">
+                    {% for d in data %}
+                    <tr>
+                        {% if user.is_superuser %}
+                        <td><a href="{% url 'update-ncr-tracking' d.id %}">{{ d.id }}</a></td>
+                        {% endif %}
+                        <td>{{ d.project }}</td>
+                        <td>{{ d.serial_number }}</td>
+                        <td>{{ d.ncr_date }}</td>
+                        <td>{{ d.ncr_number }}</td>
+                        <td>{{ d.customer_part_number }}</td>
+                        <td>{{ d.internal_fg_partnumber }}</td>
+                        <td>{{ d.po_number }}</td>
+                        <td>{{ d.details }}</td>
+                        <td>{{ d.ncr_quantity }}</td>
+                        <td>{{ d.remaining }}</td>
+                        <td>{{ d.consumed }}</td>
+                        <td>{{ d.add_quantity }}</td>
+                        <td>{{ d.ncr_status }}</td>
+                        <td>{{ d.approval_status }}</td>
+                        <td>{{ d.approval_Date }}</td>
+                        <td><a class="btn btn-sm btn-primary" href="{% url 'demo_excel' d.pk %}">Download</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="pagination justify-content-center">
+                <span class="step-links">
+                    {% if data.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ data.previous_page_number }}">previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ data.number }} of {{ data.paginator.num_pages }}.
+                    </span>
+
+                    {% if data.has_next %}
+                        <a href="?page={{ data.next_page_number }}">next</a>
+                        <a href="?page={{ data.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+</div>
+<script>
+        $(document).ready(function () {
+        $("#showUploadFormBtn").click(function () {
+            $("#uploadFormContainer").toggle();
+        });
+    });
+</script>
+
+{% endblock %}
+

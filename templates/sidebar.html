@@ -1,0 +1,33 @@
+{% load static %}
+
+
+{% url 'index' as index %}
+{% url 'add_user' as add_user %}
+
+{% if request.path != index and request.path != add_user %}
+
+<div class="sidebar text-white shadow-lg fixed top-5 left-5 bottom-5 rounded-md w-[200px] p-4 z-20 overflow-hidden bg-gradient-to-r from-cyan-500 to-cyan-600">
+    <a href="{% url 'index' %}" class="text-4xl mx-auto">
+        <img src="{% static 'images/Picture2.png' %}" style="width: 100px;" />
+    </a>
+    <div class="menu mt-8">
+        <a href="{% url 'master_data' %}" class="py-4 ps-2 block my-2 border-s border-opacity-5 rounded-md hover:translate-x-5 duration-200">
+            <small class="text-sm">Master Data</small>
+        </a>
+        <a href="{% url 'work_order' %}" class="py-4 ps-2 block my-2 border-s border-opacity-5 rounded-md hover:translate-x-5 duration-200">
+            <small class="text-sm">Order Assigning</small>
+        </a>
+        <a href="{% url 'ac' %}" class="py-4 ps-2 block my-2 border-s border-opacity-5 rounded-md hover:translate-x-5 duration-200">
+            <small class="text-sm">AC</small>
+        </a>
+        <a href="{% url 'export' %}" class="py-4 ps-2 block my-2 border-s border-opacity-5 rounded-md hover:translate-x-5 duration-200">
+            <small class="text-sm">Export</small>
+        </a>
+        <a href="{% url 'wip' %}" class="py-4 ps-2 block my-2 border-s border-opacity-5 rounded-md hover:translate-x-5 duration-200">
+            <small class="text-sm">WIP Reports</small>
+        </a>
+
+    </div>
+</div>
+
+{% endif %}

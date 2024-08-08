@@ -15,5 +15,5 @@ urlpatterns = [
     path('wip', views.wip_report_view, name='wip'),
     path('export/excel/', views.export_to_excel, name='export_to_excel'),
     path('update-master/', views.update_master_view, name='update_master'),
-
+    path('get-serials/<str:fg>/<str:wo>/', views.get_serials, name="get_serials"),
 ]

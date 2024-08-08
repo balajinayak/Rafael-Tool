@@ -221,7 +221,7 @@ def work_order(request):
             all_common = FG.objects.filter(fg_number=data.fg_number, process="common_process", order=data.order)
             user_instance = CustomUser.objects.get(username=request.user)
 
-            update_next_common_fg(request, data)
+            update_next_fg(request, data)
 
             try:
                 for ac in all_common:
@@ -313,16 +313,6 @@ def work_order(request):
     return render(request, 'ac/work_order.html', context)
 
 
-def update_next_common_fg(request, data):
-    try:
-        next_data = FG.objects.filter(fg_number=data.fg_number,work_order=data.work_order,order=int(data.order)+1)
-        if next_data:
-            for nd in next_data:
-                nd.prev_submit = True
-                nd.save()
-    except:
-        messages.error(request, "something went wrong in getting future submiting data")
-
 
 @login_required
 def ac_view(request):
@@ -355,6 +345,8 @@ def ac_view(request):
             id = request.POST.get('id')
             data = FG.objects.get(id=id)
             user_instance = CustomUser.objects.get(username=request.user)
+
+            update_next_fg(request, data)
 
             try:
                 if data.position == 'both':
@@ -408,7 +400,6 @@ def ac_view(request):
                 print('something wrong')
 
             update_first_order(data)
-            update_next_fg(request, data)
 
             query_params = request.GET.urlencode()
             return redirect(f"{request.path}?{query_params}")
@@ -459,15 +450,14 @@ def update_first_order(data):
                 pass
 
 
+
 def update_next_fg(request, data):
     try:
-        non_sub_fgs = FG.objects.filter(fg_number=data.fg_number,work_order=data.work_order,order=data.order,submited=False)
-        if not non_sub_fgs:
-            next_data = FG.objects.filter(fg_number=data.fg_number,work_order=data.work_order,order=int(data.order)+1)
-            if next_data:
-                for nd in next_data:
-                    nd.prev_submit = True
-                    nd.save()
+        next_data = FG.objects.filter(fg_number=data.fg_number,work_order=data.work_order,order=int(data.order)+1)
+        if next_data:
+            for nd in next_data:
+                nd.prev_submit = True
+                nd.save()
     except:
         messages.error(request, "something went wrong in getting future submiting data")
 
@@ -572,10 +562,10 @@ from django.http import HttpResponse
 from django.shortcuts import render
 import base64
 
-def generate_barcode_svg(barcode_value):
-    # Generate barcode SVG data
-    code128 = Code128(barcode_value, writer=barcode.writer.SVGWriter())
-    return code128.render().decode('utf-8')
+#def generate_barcode_svg(barcode_value):
+#    # Generate barcode SVG data
+#    code128 = Code128(barcode_value, writer=barcode.writer.SVGWriter())
+#    return code128.render().decode('utf-8')
 
 
 @login_required
@@ -590,11 +580,11 @@ def serial_export(request):
         remarks = FG.objects.filter(serial=serial).order_by('remarks').distinct('remarks')
         dummy = Dummy.objects.filter(fg_number=fg.fg_number).first()
 
-        barcode_values = [fg.product, fg.pro_rev, fg.serial]
-        barcode_svgs = []
+        #barcode_values = [fg.product, fg.pro_rev, fg.serial]
+        #barcode_svgs = []
 
-        for barcode_value in barcode_values:
-            barcode_svgs.append(generate_barcode_svg(barcode_value))
+        #for barcode_value in barcode_values:
+        #    barcode_svgs.append(generate_barcode_svg(barcode_value))
 
         unique_data = []
         seen = set()
@@ -608,7 +598,7 @@ def serial_export(request):
             'fg': fg,
             'data': serials,
             'unique': unique_data,
-            'barcode_svgs': barcode_svgs,
+            #'barcode_svgs': barcode_svgs,
             'common_note': common_note,
             'common_note_length': common_note_length,
             'remarks': remarks,
@@ -725,6 +715,15 @@ def wip_report_view(request):
     }
 
     return render(request, 'ac/wip_report.html', context)
+
+
+
+from django.http import JsonResponse
+
+def get_serials(request, fg, wo):
+    serial_numbers = FG.objects.filter(fg_number=fg, work_order=wo).order_by('serial').values_list('serial', flat=True).distinct()
+    serials = list(serial_numbers)
+    return JsonResponse(serials, safe=False)
 
 
 @login_required

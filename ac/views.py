@@ -738,6 +738,7 @@ def get_serials(request, fg, wo, ord):
     return JsonResponse(serials, safe=False)
 
 
+
 @login_required
 def export_to_excel(request):
 

@@ -198,7 +198,7 @@
                     <tr class="border-b-2 border-slate-100 last:border-b-0 odd:bg-white even:bg-slate-100">
                         <td class="text-center">{{ data.fg_number }}</td>
                         <td class="text-center">
-                            <a href="#" onmouseover="openModal1(this)" data-fg="{{ data.fg_number }}" data-wo="{{ data.work_order }}">{{ data.work_order }}</a>
+                            <a href="#" data-wo="{{ data.work_order }}">{{ data.work_order }}</a>
                         </td>
                         <td class="text-center">{{ data.wo_quantity }}</td>
                         {% for stage in stages %}
@@ -207,7 +207,9 @@
                                     {% for fg_stage in data.stages %}
                                         {% if fg_stage.description == stage.description %}
                                             {% with matching_stage=fg_stage %}
-                                                <small id="quantity">{{ fg_stage.quantity }}</small>
+                                                <a href="#" onmouseover="openModal1(this)" data-fg="{{ data.fg_number }}" data-wo="{{ data.work_order }}" data-order="{{ fg_stage.order }}">
+                                                    <small id="quantity">{{ fg_stage.quantity }}</small>
+                                                </a>
                                             {% endwith %}
                                         {% endif %}
                                     {% endfor %}
@@ -253,8 +255,9 @@
 
             const fg = e.dataset.fg;
             const wo = e.dataset.wo;
+            const ord = e.dataset.order;
 
-            fetch(`/get-serials/${fg}/${wo}/`)
+            fetch(`/get-serials/${fg}/${wo}/${ord}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok ' + response.statusText);

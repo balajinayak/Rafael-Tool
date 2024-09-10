@@ -50,7 +50,7 @@
             {% csrf_token %}
             <div class="flex justify-center items-center gap-x-4">
                 <div class="flex gap-6 items-center">
-                    <input type="text" placeholder="Serial Number" list="ser" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="serial" value="{{ serial | default:'' }}" autocomplete="off" />
+                    <input type="text" autofocus placeholder="Serial Number" list="ser" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500" name="serial" value="{{ serial | default:'' }}" autocomplete="off" />
                     <datalist id="ser">
                         {% for s in ser_list %}
                         <option class="py-2">{{ s }}</option>
@@ -189,7 +189,7 @@
                                 <input type="hidden" value="{{ individual.pk }}" name="id" />
                                 {% if individual.prev_submit %}<!--new-->
                                 {% if user.position == individual.position or user.is_superuser %}
-                                    {% if user.is_submit is False and test_data.test is False and not user.is_supervisor %}
+                                    {% if user.is_submit is False and test_data.test is False %}
                                         <button type="submit" class="border-cyan-500 text-cyan-500 px-4 py-2 rounded cursor-pointer border hover:bg-gradient-to-r from-cyan-500 to-cyan-600 hover:text-white" name="individual_submit" value="individualSubmit">Submit</button>
                                     {% else %}
                                         <button class="bg-red-500 px-4 py-2 rounded-lg" type="button" onclick="alert('You can try after sometimes')">Submit</button>

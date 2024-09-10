@@ -6,12 +6,13 @@ from datetime import timedelta
 
 
 def function():
+    print("good morning")
     users = CustomUser.objects.filter(is_submit=True)
     test_model = TestingModel.objects.filter(test=True).first()
     fgs = FG.objects.all()
     current_time = timezone.now()
     current_date = timezone.now().date()
-    yesterday = timezone.now() - timezone.timedelta(seconds=1)
+    yesterday = timezone.now() - timezone.timedelta(seconds=5)
 
     for user in users:
         user_time = user.is_submit_time
@@ -38,5 +39,5 @@ def function():
 
 def start_scheduler():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(function, 'interval', seconds=10)
+    scheduler.add_job(function, 'interval', seconds=5)
     scheduler.start()

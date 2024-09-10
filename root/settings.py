@@ -51,6 +51,9 @@ INSTALLED_APPS = [
 ]
 
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880000
+
+
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'Custom',
@@ -66,6 +69,7 @@ CKEDITOR_CONFIGS = {
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 
 
+
 # APScheduler settings
 SCHEDULER_API_ENABLED = True
 SCHEDULER_AUTOSTART = True
@@ -74,7 +78,7 @@ SCHEDULER_DEFAULT_JOBS = [
     {
         'func': 'dashboard.tasks.function',
         'trigger': 'interval',
-        'seconds': 10,
+        'seconds': 5,
     },
 ]
 

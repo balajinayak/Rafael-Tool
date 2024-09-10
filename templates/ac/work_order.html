@@ -304,17 +304,47 @@
 
 <script>
 
-    const starting = document.getElementById('id_starting')
-    const ending = document.getElementById('id_ending')
-    const wo_quantity = document.getElementById('id_wo_quantity')
-    
-    function quantity(cdlNumber) {
-        let numericPart = parseInt(starting.value.slice(9));
-        numericPart = numericPart - 1
-        numericPart += parseInt(wo_quantity.value)
-        let incrementedCDL = starting.value.slice(0, 9) + numericPart.toString().padStart(3, '0');
-        ending.value = incrementedCDL
+    const starting = document.getElementById('id_starting');
+    const ending = document.getElementById('id_ending');
+    const wo_quantity = document.getElementById('id_wo_quantity');
+
+    function quantity() {
+        // Ensure values are not empty
+        if (!starting.value || !wo_quantity.value) {
+            console.error('Starting value or work order quantity is missing.');
+            return;
+        }
+        
+        // Extract the numeric part from the starting value
+        const startingNumericPartStr = starting.value.slice(starting.value.indexOf('-') + 1);
+        const startingNumericPart = parseInt(startingNumericPartStr, 10);
+        const quantityValueFull = parseInt(wo_quantity.value, 10);
+        const quantityValue = quantityValueFull - 1
+
+        if (isNaN(startingNumericPart) || isNaN(quantityValue)) {
+            console.error('Invalid numeric values.');
+            return;
+        }
+
+        // Calculate the new numeric part
+        let numericPart = startingNumericPart;
+        numericPart += quantityValue;
+
+        // Convert numeric part to string
+        const numericPartString = numericPart.toString();
+
+        // Determine the length of the numeric part
+        const fixedLength = startingNumericPartStr.length; // Maintain the length of the original numeric part
+
+        // Ensure proper padding if necessary
+        const paddedNumericPart = numericPartString.padStart(fixedLength, '0');
+
+        // Construct the new CDL number and update the ending field
+        const incrementedCDL = starting.value.slice(0, starting.value.indexOf('-') + 1) + paddedNumericPart;
+        ending.value = incrementedCDL;
     }
+
+
 
 
 

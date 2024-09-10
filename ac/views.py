@@ -93,7 +93,6 @@ def add_dummy(request):
     return render(request, 'ac/master_data.html', {'fg_err' : fg_err})
 
 
-
 @login_required
 def work_order(request):
     get_fg_number = request.GET.get('get_fg_number')
@@ -211,6 +210,7 @@ def work_order(request):
                     messages.success(request, 'something wrong')
     else:
         form = FGForm()
+
 
 
     if request.method == 'POST':
@@ -402,7 +402,8 @@ def ac_view(request):
             update_first_order(data)
 
             query_params = request.GET.urlencode()
-            return redirect(f"{request.path}?{query_params}")
+            #return redirect(f"{request.path}?{query_params}")
+            return redirect('ac')
     
     context = {
         'individual': individual,
@@ -427,18 +428,29 @@ def update_first_order(data):
         if first_order.order == data.order:
             submitted_order = FG.objects.filter(fg_number=data.fg_number, work_order=data.work_order, order=first_order.order, process="individual_process")
             next_fgs_sample = FG.objects.filter(fg_number=data.fg_number, work_order=data.work_order, order__gt=first_order.order, process="individual_process").first()
-            next_fgs = FG.objects.filter(fg_number=next_fgs_sample.fg_number, work_order=next_fgs_sample.work_order, order=next_fgs_sample.order, process="individual_process")
+            next_fgs = ''
+            if next_fgs_sample:
+                next_fgs = FG.objects.filter(fg_number=next_fgs_sample.fg_number, work_order=next_fgs_sample.work_order, order=next_fgs_sample.order, process="individual_process")
             for sub in submitted_order:
-                sub.quantity = int(sub.quantity) - 1
-                sub.save()
-            for nf in next_fgs:
-                nf.quantity = int(nf.quantity) + 1
-                nf.save()
+                if sub.quantity < 0:
+                    sub.quantity = 0
+                    sub.save()
+                else:
+                    sub.quantity = int(sub.quantity) - 1
+                    sub.save()
+            if next_fgs:
+                for nf in next_fgs:
+                    nf.quantity = int(nf.quantity) + 1
+                    nf.save()
         else:
             current_order = FG.objects.filter(fg_number=data.fg_number, work_order=data.work_order, order=data.order, process="individual_process")
             for co in current_order:
-                co.quantity = int(co.quantity) - 1
-                co.save()
+                if co.quantity < 0:
+                    co.quantity = 0
+                    co.save()
+                else:
+                    co.quantity = int(co.quantity) - 1
+                    co.save()
             try:
                 next_order_sample = FG.objects.filter(fg_number=data.fg_number, work_order=data.work_order, order__gt=data.order, process="individual_process").first()
                 next_order = FG.objects.filter(fg_number=next_order_sample.fg_number, work_order=next_order_sample.work_order, order=next_order_sample.order, process="individual_process")
@@ -720,8 +732,8 @@ def wip_report_view(request):
 
 from django.http import JsonResponse
 
-def get_serials(request, fg, wo):
-    serial_numbers = FG.objects.filter(fg_number=fg, work_order=wo).order_by('serial').values_list('serial', flat=True).distinct()
+def get_serials(request, fg, wo, ord):
+    serial_numbers = FG.objects.filter(fg_number=fg, work_order=wo, order=ord, submited=False).order_by('serial').values_list('serial', flat=True).distinct()
     serials = list(serial_numbers)
     return JsonResponse(serials, safe=False)
 

@@ -14,8 +14,9 @@
 
         .page {
             size: A4;
-            margin: 5px;
+            margin: 50px 5px;
             page-break-after: always;
+            position: relative;
         }
 
         /* Additional styles for content */
@@ -28,39 +29,18 @@
             border-right: 1px solid rgb(180, 179, 179);
         }
         .footer{
-            background-color: white;
             position: absolute;
-            bottom: 40px;
+            top: 1242px;
             left: 0;
             right: 0;
-        }
-        .footer-3{
             background-color: white;
-            position: absolute;
-            top: 1200px;
-            left: 0;
-            right: 0;
-        }
-        .footer-2{
-            background-color: white;
-            position: absolute;
-            top: 1200px;
-            left: 0;
-            right: 0;
-        }
-        .footer-1{
-            background-color: white;
-            position: fixed;
-            top: 1200px;
-            left: 0;
-            right: 0;
         }
     </style>
 </head>
 <body>
     <!-- Page 1 -->
-    <div class="page" style="position: relative;">
-        <div class="content">
+    <div class="page">
+        <div class="content content-1">
             <div>
                 <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.fg_number }}</small>
                 <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.project_name }}</small>
@@ -94,16 +74,24 @@
             </ul>
         </div>
 
-        <div class="footer-1">
+        <div class="footer">
             <small style="display: block; border-bottom: 1px solid rgb(29, 29, 122); text-align: center;">Document Pages: Page <span class="numb"></span> of <span class="total"></span></small>
             <small style="display: block;">Doc ID: {{ fg.doc_ref_no }}     <span style="margin-left: 65px;">Revision: {{ fg.checklist_rev_no }}</span></small>
             <small style="display: block;">Doc Status: Released    <span style="margin-left: 45px;">Status Date: {{ fg.update|date:"d-m-Y" }}</span></small>
             <small style="display: block; color: green;">This document is the intellectual property of Cyient-DLM and should not be reproduced in any form. This document will be treated as controlled copy</small>
         </div>
+
+        <div class="footer-demo-1 footer" id="dup1" style="position: absolute; top: 2500px; right: 0; left: 0;">
+            <small style="display: block; border-bottom: 1px solid rgb(29, 29, 122); text-align: center;">Document Pages: Page <span class="numb"></span> of <span class="total"></span></small>
+            <small style="display: block;">Doc ID: 222{{ fg.doc_ref_no }}     <span style="margin-left: 65px;">Revision: {{ fg.checklist_rev_no }}</span></small>
+            <small style="display: block;">Doc Status: Released    <span style="margin-left: 45px;">Status Date: {{ fg.update|date:"d-m-Y" }}</span></small>
+            <small style="display: block; color: green;">This document is the intellectual property of Cyient-DLM and should not be reproduced in any form. This document will be treated as controlled copy</small>
+        </div>
+
     </div><!-- Page 1 -->
 
     <!-- Page 2 -->
-    <div class="page" style="position: relative;">
+    <div class="page">
         <div class="content">
             <div>
                 <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.fg_number }}</small>
@@ -206,17 +194,19 @@
                     </tr>
                 {% endfor %}
             </table>
-            <div class="footer-2">
+
+        </div>
+
+            <div class="footer">
                 <small style="display: block; border-bottom: 1px solid rgb(29, 29, 122); text-align: center;">Document Pages: Page <span class="numb"></span> of <span class="total"></span></small>
                 <small style="display: block;">Doc ID: {{ fg.doc_ref_no }}     <span style="margin-left: 65px;">Revision: {{ fg.checklist_rev_no }}</span></small>
                 <small style="display: block;">Doc Status: Released    <span style="margin-left: 45px;">Status Date: {{ fg.update|date:"d-m-Y" }}</span></small>
                 <small style="display: block; color: green;">This document is the intellectual property of Cyient-DLM and should not be reproduced in any form. This document will be treated as controlled copy</small>
             </div>
-        </div>
     </div><!-- Page 2 -->
 
     <!-- Page 3 -->
-    <div class="page" style="position: relative;">
+    <div class="page">
         <div class="content">
             <div>
                 <small style="text-align: right; display:block; padding:2px 0px;">{{ fg.fg_number }}</small>
@@ -296,13 +286,15 @@
                     <td>Date : </td>
                 </tr>
             </table>
-            <div class="footer-3">
-                <small style="display: block; border-bottom: 1px solid rgb(29, 29, 122); text-align: center;">Document Pages: Page <span class="numb"></span> of <span class="total"></span></small>
-                <small style="display: block;">Doc ID: {{ fg.doc_ref_no }}     <span style="margin-left: 65px;">Revision: {{ fg.checklist_rev_no }}</span></small>
-                <small style="display: block;">Doc Status: Released    <span style="margin-left: 45px;">Status Date: {{ fg.update|date:"d-m-Y" }}</span></small>
-                <small style="display: block; color: green;">This document is the intellectual property of Cyient-DLM and should not be reproduced in any form. This document will be treated as controlled copy</small>
-            </div>
         </div>
+
+        <div class="footer">
+            <small style="display: block; border-bottom: 1px solid rgb(29, 29, 122); text-align: center;">Document Pages: Page <span class="numb"></span> of <span class="total"></span></small>
+            <small style="display: block;">Doc ID: {{ fg.doc_ref_no }}     <span style="margin-left: 65px;">Revision: {{ fg.checklist_rev_no }}</span></small>
+            <small style="display: block;">Doc Status: Released    <span style="margin-left: 45px;">Status Date: {{ fg.update|date:"d-m-Y" }}</span></small>
+            <small style="display: block; color: green;">This document is the intellectual property of Cyient-DLM and should not be reproduced in any form. This document will be treated as controlled copy</small>
+        </div>
+
     </div><!-- Page 3 -->
 
     <!-- Page 4 -->
@@ -390,36 +382,46 @@
                     <td>Date : </td>
                 </tr>
             </table>
-            <div class="footer">
-                <small style="display: block; border-bottom: 1px solid rgb(29, 29, 122); text-align: center;">Document Pages: Page <span class="numb"></span> of <span class="total"></span></small>
-                <small style="display: block;">Doc ID: {{ fg.doc_ref_no }}     <span style="margin-left: 65px;">Revision: {{ fg.checklist_rev_no }}</span></small>
-                <small style="display: block;">Doc Status: Released    <span style="margin-left: 45px;">Status Date: {{ fg.update|date:"d-m-Y" }}</span></small>
-                <small style="display: block; color: green;">This document is the intellectual property of Cyient-DLM and should not be reproduced in any form. This document will be treated as controlled copy</small>
-            </div>
         </div>
+
+        <div class="footer">
+            <small style="display: block; border-bottom: 1px solid rgb(29, 29, 122); text-align: center;">Document Pages: Page <span class="numb"></span> of <span class="total"></span></small>
+            <small style="display: block;">Doc ID: {{ fg.doc_ref_no }}     <span style="margin-left: 65px;">Revision: {{ fg.checklist_rev_no }}</span></small>
+            <small style="display: block;">Doc Status: Released    <span style="margin-left: 45px;">Status Date: {{ fg.update|date:"d-m-Y" }}</span></small>
+            <small style="display: block; color: green;">This document is the intellectual property of Cyient-DLM and should not be reproduced in any form. This document will be treated as controlled copy</small>
+        </div>
+
     </div><!-- Page 4 -->
 
     <script>
-        const pages = document.querySelectorAll('.page');
-        const numbs = document.querySelectorAll('.numb');
-        const totals = document.querySelectorAll('.total');
-    
-        console.log('Total pages:', pages.length);
-        
-        for (var i = 0; i < pages.length; i++) {
-            console.log('Updating page:', i);
-            console.log('Total elements:', totals[i]);
-            console.log('Numb elements:', numbs[i]);
-    
-            if (totals[i] && numbs[i]) {
-                totals[i].innerHTML = pages.length;
-                numbs[i].innerHTML = i + 1;
+        document.addEventListener('DOMContentLoaded', function(){
+
+            const content1 = document.querySelector('.content-1');
+            const fd1 = document.querySelector('.footer-demo-1');
+            const pages = document.querySelectorAll('.page');
+            const footers = document.querySelectorAll('.footer');
+            const numbs = document.querySelectorAll('.numb');
+            const totals = document.querySelectorAll('.total');
+
+            
+            if (content1.offsetHeight > 1200) {
+                fd1.style.display = "block";
+
             } else {
-                console.warn('Mismatch in element count or indexing issue');
+                fd1.style.display = "none";
             }
+            
+            for (var i = 0; i < total_pages.length; i++) {
+        
+                if (footers[i] && numbs[i]) {
+                    totals[i].innerHTML = total_pages;
+                    numbs[i].innerHTML = i + 1;
+                } else {
+                    console.warn('Mismatch in element count or indexing issue');
+                }
 
-        }
-
+            }
+        })
     </script>
 
 </body>

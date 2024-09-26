@@ -130,6 +130,7 @@
                 <thead>
                     <tr class="text-center">
                         <td class="text-sm">Order</td>
+                        <td class="text-sm">PDF Order</td>
                         <td class="text-sm">Para</td>
                         <td class="text-sm">Description</td>
                         <td class="text-sm">
@@ -153,6 +154,9 @@
                             <input type="checkbox" name="pdf_check" class="pdf_checkbox" />
                             <input type="hidden" name="in_pdf" value="not_in_pdf" class="in_pdf" />
                             <input type="text" readonly value="1" class="text-center w-[80px]" name="order" id="id_order" />
+                        </td>
+                        <td>
+                            <input type="number" name="pdf_order" id="id_pdf_order" class="appearance-none block w-[70px] bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-full" placeholder="1" />
                         </td>
                         <td>
                             <input type="text" readonly value="10" class="text-center w-[80px]" name="para" id="id_para" />
@@ -239,6 +243,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     <input type="checkbox" name="pdf_check" class="pdf_checkbox" />
                     <input type="hidden" name="in_pdf" value="not_in_pdf" class="in_pdf" />
                     <input type="text" value="${++num}" class="text-center w-[80px]" name="order" id="id_order" />
+                </td>
+                <td>
+                    <input type="number" name="pdf_order" id="id_pdf_order" class="appearance-none block w-[70px] bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:outline-none focus:shadow-md focus:shadow-cyan-100 focus:border-cyan-500 w-full" placeholder="1" />
                 </td>
                 <td class="w-[10px]">
                     <input type="text" readonly value="${para}" class="text-center w-[80px]" name="para" id="id_para" />

@@ -52,13 +52,14 @@ def add_dummy(request):
                 aps = request.POST.getlist('aps')
                 in_pdf = request.POST.getlist('in_pdf')
                 order = request.POST.getlist('order')
+                pdf_order = request.POST.getlist('pdf_order')
                 para = request.POST.getlist('para')
                 description = request.POST.getlist('description')
                 remarks = request.POST.getlist('remarks')
                 position = request.POST.getlist('position')
                 process = request.POST.getlist('process')
 
-                for o, d, r, p, pro, pa, ap , ip in zip(order, description, remarks, position, process, para, aps, in_pdf):
+                for o, po, d, r, p, pro, pa, ap , ip in zip(order, pdf_order, description, remarks, position, process, para, aps, in_pdf):
                     Dummy.objects.create(
                         user=user,
                         fg_number=fg_number,
@@ -75,6 +76,7 @@ def add_dummy(request):
                         aps=ap,
                         in_pdf=ip,
                         order=o,
+                        pdf_order=po,
                         para=pa,
                         description=d,
                         remarks=r,
@@ -131,6 +133,7 @@ def work_order(request):
                 aps = [items.aps for items in all_dummy]
                 in_pdf = [items.in_pdf for items in all_dummy]
                 order = [items.order for items in all_dummy]
+                pdf_order = [items.pdf_order for items in all_dummy]
                 para = [items.para for items in all_dummy]
                 description = [items.description for items in all_dummy]
                 remarks = [items.remarks for items in all_dummy]
@@ -174,7 +177,7 @@ def work_order(request):
                         else:
                             serial = "CDL" + str(num)
                             serial = serial[:-4] + "-" + serial[-4:]
-                        for o, pa, d, r, p, pro, ap, ip in zip(order, para, description, remarks, position, process, aps, in_pdf):
+                        for o, po, pa, d, r, p, pro, ap, ip in zip(order, pdf_order, para, description, remarks, position, process, aps, in_pdf):
 
                             FG.objects.create(
                                 user=user,
@@ -196,6 +199,7 @@ def work_order(request):
                                 aps=ap,
                                 in_pdf=ip,
                                 order=o,
+                                pdf_order=po,
                                 para=pa,
                                 description=d,
                                 remarks=r,
@@ -456,6 +460,7 @@ def update_first_order(data):
                 next_order = FG.objects.filter(fg_number=next_order_sample.fg_number, work_order=next_order_sample.work_order, order=next_order_sample.order, process="individual_process")
                 if next_order:
                     for no in next_order:
+                        no.prev_submit_serial = True
                         no.quantity = int(no.quantity) + 1
                         no.save()
             except:
@@ -468,6 +473,7 @@ def update_next_fg(request, data):
         next_data = FG.objects.filter(fg_number=data.fg_number,work_order=data.work_order,order=int(data.order)+1)
         if next_data:
             for nd in next_data:
+                nd.prev_submit_serial = True
                 nd.prev_submit = True
                 nd.save()
     except:
@@ -585,7 +591,7 @@ def serial_export(request):
     if request.method == 'POST':
         serial = request.POST.get('export_serial')
     if request.user.is_superuser or request.user.is_supervisor:
-        serials = FG.objects.filter(serial=serial,in_pdf="in_pdf").order_by('order')
+        serials = FG.objects.filter(serial=serial,in_pdf="in_pdf").order_by('pdf_order')
         fg = FG.objects.filter(serial=serial).first()
         common_note = FG.objects.filter(serial=serial).order_by('common_note').distinct('common_note')
         common_note_length = FG.objects.order_by('common_note').distinct('common_note').count()
@@ -732,8 +738,8 @@ def wip_report_view(request):
 
 from django.http import JsonResponse
 
-def get_serials(request, fg, wo, ord):
-    serial_numbers = FG.objects.filter(fg_number=fg, work_order=wo, order=ord, submited=False).order_by('serial').values_list('serial', flat=True).distinct()
+def get_serials(request, fg, wo, ord, qty):
+    serial_numbers = FG.objects.filter(fg_number=fg, work_order=wo, order=ord, submited=False).order_by('serial').values_list('serial', flat=True).distinct()[:qty]
     serials = list(serial_numbers)
     return JsonResponse(serials, safe=False)
 

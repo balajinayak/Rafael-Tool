@@ -207,7 +207,7 @@
                                     {% for fg_stage in data.stages %}
                                         {% if fg_stage.description == stage.description %}
                                             {% with matching_stage=fg_stage %}
-                                                <a href="#" onmouseover="openModal1(this)" data-fg="{{ data.fg_number }}" data-wo="{{ data.work_order }}" data-order="{{ fg_stage.order }}">
+                                                <a href="#" onmouseover="openModal1(this)" data-fg="{{ data.fg_number }}" data-wo="{{ data.work_order }}" data-order="{{ fg_stage.order }}" data-qty="{{ fg_stage.quantity }}">
                                                     <small id="quantity">{{ fg_stage.quantity }}</small>
                                                 </a>
                                             {% endwith %}
@@ -224,7 +224,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="modal1" class="hidden bg-slate-600 text-white border-2 border-slate-500 fixed top-[10%] left-[30%] p-4 rounded-md" style="max-height: 80vh; overflow-y: auto;">
+        <div id="modal1" class="hidden bg-slate-600 text-white border-2 border-slate-500 fixed top-[10%] left-[50%] p-4 rounded-md" style="max-height: 80vh; overflow-y: auto;">
             <div class="w-full flex justify-between">
                 <p id="modal1-text"></p>
                 <i class="fa-solid fa-xmark cursor-pointer hidden" id="close1" onclick="closeModal1()"></i>
@@ -256,8 +256,9 @@
             const fg = e.dataset.fg;
             const wo = e.dataset.wo;
             const ord = e.dataset.order;
+            const qty = e.dataset.qty;
 
-            fetch(`/get-serials/${fg}/${wo}/${ord}`)
+            fetch(`/get-serials/${fg}/${wo}/${ord}/${qty}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok ' + response.statusText);

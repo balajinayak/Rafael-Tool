@@ -21,6 +21,7 @@ class Dummy(models.Model):
     aps = models.CharField(max_length=200, null=True, blank=True)
     in_pdf = models.CharField(max_length=200, null=True, blank=True)
     order = models.IntegerField(null=True, blank=True)
+    pdf_order = models.CharField(null=True, blank=True)
     para = models.IntegerField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     remarks = models.TextField(null=True, blank=True)
@@ -64,6 +65,7 @@ class FG(models.Model):
     serial = models.CharField(max_length=1000, null=True, blank=True)
     in_pdf = models.CharField(max_length=200, null=True, blank=True)
     order = models.IntegerField(null=True, blank=True)
+    pdf_order = models.CharField(null=True, blank=True)
     para = models.IntegerField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     remarks = models.TextField(null=True, blank=True)
@@ -90,6 +92,7 @@ class FG(models.Model):
     quantity = models.IntegerField(default=0)
     update = models.DateTimeField(auto_now=True)
     prev_submit = models.BooleanField(default=False)
+
 
 
     def __str__(self):

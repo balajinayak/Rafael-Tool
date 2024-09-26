@@ -87,7 +87,7 @@
             </tr>
                 {% if serials %}
                     {% for s in serials %}
-                        {% if s.customer_part_number %}
+                        <!--{% if s.customer_part_number %}-->
                             <tr class="border-b-2">
                                 <td class="py-3">{{ s.serial }}</td>
                                 <td class="py-3 text-end">
@@ -102,9 +102,10 @@
                                     </form>
                                 </td>
                             </tr>
-                        {% else %}
+                        <!--{% else %}
                             <script>showAlert('Customer Order not assining.', 'error')</script>
                         {% endif %}
+                        -->
                     {% endfor %}
                 {% else %}
                     <p>No Submitted Serial Number</p>

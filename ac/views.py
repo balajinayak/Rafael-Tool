@@ -509,7 +509,7 @@ def export_view(request):
     submitted_serials = []
 
     if serial:
-        all_serial = FG.objects.filter(submited=True, serial=serial).order_by('serial').distinct('serial')
+        all_serial = FG.objects.filter(submited=True,  process="individual_process", serial=serial).order_by('serial').distinct('serial')[:7]
         for als in all_serial:
             order_count = Dummy.objects.filter(fg_number=als.fg_number).count()
             serials_orders = FG.objects.filter(serial=als.serial, submited=True).count()
@@ -535,13 +535,12 @@ def export_view(request):
 
     else:
 
-        all_serial = FG.objects.filter(submited=True).order_by('serial').distinct('serial')
+        all_serial = FG.objects.filter(submited=True, process="individual_process").order_by('serial').distinct('serial')[:7]
         for als in all_serial:
             order_count = Dummy.objects.filter(fg_number=als.fg_number).count()
-            serials_orders = FG.objects.filter(serial=als.serial, submited=True).count()
-            if order_count == serials_orders:
-                if als.customer_part_number:
-                    submitted_serials.append(als.serial)
+            #serials_orders = FG.objects.filter(serial=als.serial, submited=True).count()
+            #if order_count == serials_orders:
+            #    submitted_serials.append(als.serial)
 
         serials_set = set(submitted_serials)
         serial_nums = list(serials_set)
@@ -561,7 +560,7 @@ def export_view(request):
 
         
     context = {
-        'serials': serials,
+        'serials': all_serial,
         'serial': serial,
         'serial_search': serial_search,
         'fg_list': fg_list,

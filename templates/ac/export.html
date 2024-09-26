@@ -87,25 +87,20 @@
             </tr>
                 {% if serials %}
                     {% for s in serials %}
-                        <!--{% if s.customer_part_number %}-->
-                            <tr class="border-b-2">
-                                <td class="py-3">{{ s.serial }}</td>
-                                <td class="py-3 text-end">
-                                    <form method="post" action="{% url 'serial_export' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="export_serial" value="{{ s.serial }}" />
-                                        {% if user.is_superuser or user.is_supervisor %}
-                                            <button type="submit" class="bg-slate-700 text-white px-2 py-1 rounded-md">Export</button>
-                                        {% else %}
-                                            <button type="button" class="bg-slate-700 text-white px-2 py-1 rounded-md" onclick="showAlert('You don\'t have access to export this file.', 'error')">Export</button>
-                                        {% endif %}
-                                    </form>
-                                </td>
-                            </tr>
-                        <!--{% else %}
-                            <script>showAlert('Customer Order not assining.', 'error')</script>
-                        {% endif %}
-                        -->
+                        <tr class="border-b-2">
+                            <td class="py-3">{{ s.serial }}</td>
+                            <td class="py-3 text-end">
+                                <form method="post" action="{% url 'serial_export' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="export_serial" value="{{ s.serial }}" />
+                                    {% if user.is_superuser or user.is_supervisor %}
+                                        <button type="submit" class="bg-slate-700 text-white px-2 py-1 rounded-md">Export</button>
+                                    {% else %}
+                                        <button type="button" class="bg-slate-700 text-white px-2 py-1 rounded-md" onclick="showAlert('You don\'t have access to export this file.', 'error')">Export</button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
                     {% endfor %}
                 {% else %}
                     <p>No Submitted Serial Number</p>
